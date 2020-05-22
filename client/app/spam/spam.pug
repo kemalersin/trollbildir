@@ -1,0 +1,38 @@
+.container
+  .row
+    .col-md-12
+      .form((keyup.enter)='addSpam()')
+        .input-group
+          input.form-control(type='text',
+            [(ngModel)]='newSpam',
+            name='spam',
+            placeholder='Bildirilecek Twitter kullanıcısının adını yazınız'
+          )
+          .input-group-btn
+            button.btn.btn-default(type='submit', (click)='addSpam()') Ekle
+      br
+  .row
+    .col-md-12
+      p.text-center
+        span(*ngIf='count===-1') Kayıtlar listeleniyor...
+        span(*ngIf='count===0') Kayıt bulunamadı!
+        span(*ngIf='count>0') Toplam {{count}} bildirilmiş kullanıcı:
+      br
+  .row(infiniteScroll,
+      [infiniteScrollDistance]='0.1',
+      [infiniteScrollThrottle]='50',
+      (scrolled)='onScroll()'
+    )
+    .col-md-3(*ngFor='let spam of spams')
+      .panel.panel-default
+        .panel-body
+          p.text-center
+            img.profile-image.img-circle([src]='spam.profile.profile_image_url_https', width='48', height='48')
+          h4.text-center
+            a([attr.href]='"https://www.twitter.com/" + spam.username', target='_blank') {{spam.username}}
+          p.text-center
+            a.spam((click)='queue(spam)', title='Bildir')
+              span.fa.fa-crosshairs.fa-2x
+            | &nbsp;&nbsp;&nbsp;
+            a.trash((click)='delete(spam)')
+              span.fa.fa-trash.fa-2x

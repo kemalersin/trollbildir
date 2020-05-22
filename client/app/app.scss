@@ -1,0 +1,45 @@
+$fa-font-path: '/assets/fonts/font-awesome/';
+@import '~font-awesome/scss/font-awesome';
+
+/**
+ * App-wide Styles
+ */
+
+ body {
+   overflow-y: scroll;
+ }
+
+ a.navbar-brand {
+  font-weight: bold;
+}
+
+.browserupgrade {
+  margin: 0.2em 0;
+  background: #ccc;
+  color: #000;
+  padding: 0.2em 0;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.ng-valid[required], .ng-valid.required  {
+  border-left: 5px solid #42A948; /* green */
+}
+
+.ng-invalid:not(form)  {
+  border-left: 5px solid #a94442; /* red */
+}
+
+.spam {
+	cursor: pointer;
+	text-decoration: none;
+	color:#42A948;
+}
+
+.trash {
+	cursor: pointer;
+	text-decoration: none;
+	color:rgb(209, 91, 71);
+}

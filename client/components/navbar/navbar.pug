@@ -1,0 +1,24 @@
+.navbar.navbar-default.navbar-static-top
+  .container
+    .navbar-header
+      button.navbar-toggle(type='button', (click)='isCollapsed = !isCollapsed')
+        span.sr-only Toggle navigation
+        span.icon-bar
+        span.icon-bar
+        span.icon-bar
+      a.navbar-brand(href='/') trollbildir
+    #navbar-main.navbar-collapse.collapse([collapse]='isCollapsed')
+      ul.nav.navbar-nav
+        li(*ngFor='let item of menu', routerLinkActive='active')
+          a(routerLink='{{item.link}}') {{item.title}}
+        li(*ngIf='isAdmin', routerLinkActive='active')
+          a(routerLink='/ekip') Ekip
+        li(*ngIf='isMember', routerLinkActive='active')
+          a(routerLink='/uyeler') Üyeler 
+        li(*ngIf='isMember', routerLinkActive='active')
+          a(routerLink='/bildirilenler') Bildirilenler                   
+      ul.nav.navbar-nav.navbar-right
+        li(*ngIf='isLoggedIn')
+          p.navbar-text Selam {{ currentUser.name }}
+        li(*ngIf='isLoggedIn')
+          a((click)='logout()', style='cursor: pointer;') Çıkış

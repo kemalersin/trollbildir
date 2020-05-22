@@ -1,0 +1,11 @@
+h3.centered
+  p.text-center
+    img(src='assets/images/logo.jpg', width='200', height='200')
+  br
+  p.text-center(*ngIf='isLoggedIn')
+    | &nbsp; Katıldığınız için teşekkürler!
+  p.small.text-center(*ngIf='isUser') Birazdan Twitter adresimize yönleneceksiniz...
+  p.text-center(*ngIf='!isLoggedIn')
+    a.btn.btn-primary.btn-lg(href='/auth/twitter')
+      i.fa.fa-twitter
+      | &nbsp; Aramıza Katıl
