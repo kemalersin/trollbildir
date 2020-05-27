@@ -13,6 +13,9 @@ var upload = multer({ dest: 'upload/', limits: {
 var router = Router();
 
 router.get('/', auth.isAuthenticated(), controller.index);
+router.get('/approve/:id', auth.hasRole('member'), controller.approve);
+router.get('/reject/:id', auth.hasRole('member'), controller.reject);
+router.get('/ban/:id', auth.hasRole('member'), controller.ban);
 router.get('/count', auth.isAuthenticated(), controller.count);
 router.get('/:filter', auth.isAuthenticated(), controller.show);
 router.delete('/:id', auth.isAuthenticated(), controller.destroy);

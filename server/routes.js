@@ -13,6 +13,7 @@ export default function (app) {
     // Insert routes below
     var env = process.env.NODE_ENV;
 
+    app.use('/api/images', require('./api/image'));
     app.use('/api/spams', require('./api/spam'));
     app.use('/api/reports', require('./api/report'));
     app.use('/api/users', require('./api/user'));
@@ -20,6 +21,7 @@ export default function (app) {
     app.use('/auth', require('./auth').default);
     
     app.set('appPath', path.join(config.root, 'client'));
+
     app.use(express.static(app.get('appPath')));
     
     if(env === 'production') {

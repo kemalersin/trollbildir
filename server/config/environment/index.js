@@ -3,39 +3,26 @@
 import path from 'path';
 import _ from 'lodash';
 
-/*function requiredProcessEnv(name) {
-  if(!process.env[name]) {
-    throw new Error('You must set the ' + name + ' environment variable');
-  }
-  return process.env[name];
-}*/
-
-// All configurations will extend these options
-// ============================================
 var all = {
     env: process.env.NODE_ENV,
 
-    // Root path of server
     root: path.normalize(`${__dirname}/../../..`),
 
-    // dev client port
     clientPort: process.env.CLIENT_PORT || 3000,
 
-    // Server port
     port: process.env.PORT || 9000,
 
-    // Server IP
+    blockUrl: process.env.BLOCK_URL,
+    blockRoute: process.env.BLOCK_ROUTE,
+
     ip: process.env.IP || '0.0.0.0',
 
-    // Should we populate the DB with sample data?
     seedDB: false,
 
-    // Secret for session, you will want to change this and make it an environment variable
     secrets: {
         session: process.env.SESSION_SECRET
     },
 
-    // MongoDB connection options
     mongo: {
         options: {
             db: {
@@ -53,8 +40,6 @@ var all = {
     }
 };
 
-// Export the config object based on the NODE_ENV
-// ==============================================
 module.exports = _.merge(
     all,
     require('./shared').default,

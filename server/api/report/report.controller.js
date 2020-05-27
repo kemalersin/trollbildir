@@ -1,4 +1,5 @@
 import Twitter from "twitter";
+import rp from 'request-promise';
 
 import Report from "./report.model";
 import Spam from "../spam/spam.model";
@@ -20,9 +21,14 @@ function getTwitter(user) {
     });
 }
 
+function isMember(req) {
+    return config.userRoles.indexOf(req.user.role) >= config.userRoles.indexOf("member");
+}
+
 export function count(req, res, next) {
     const filter = req.query.filter;
-    var query = { reportedBy: req.user.username };
+
+    var query = isMember(req) ? {} : { reportedBy: req.user.username };
 
     if (filter == "onaylananlar") {
         query.isApproved = true;
@@ -45,9 +51,11 @@ export function count(req, res, next) {
 export function index(req, res) {
     var index = +req.query.index || 1;
 
-    return Report.find({
-        reportedBy: req.user.username
-    }, "-salt -password")
+    return Report.find(
+        isMember(req) ?
+            {} :
+            { reportedBy: req.user.username },
+        "-salt -password")
         .sort({ _id: -1 })
         .skip(--index * config.dataLimit)
         .limit(config.dataLimit)
@@ -61,6 +69,7 @@ export function index(req, res) {
 export function create(req, res) {
     const twitter = getTwitter(req.user);
     const username = req.body.username.trim();
+    const notes = req.body.notes;
 
     twitter
         .get("users/show", { screen_name: username })
@@ -90,6 +99,7 @@ export function create(req, res) {
                             const newReport = new Report({
                                 username: profile.screen_name,
                                 profile: profile,
+                                notes: notes,
                                 picture: req.file ? req.file.filename : null,
                                 reportedBy: req.user.username
                             });
@@ -112,7 +122,7 @@ export function show(req, res, next) {
     const filter = req.params.filter;
 
     var index = +req.query.index || 1;
-    var query = { reportedBy: req.user.username };
+    var query = isMember(req) ? {} : { reportedBy: req.user.username };
 
     if (filter == "onaylananlar") {
         query.isApproved = true;
@@ -151,6 +161,89 @@ export function destroy(req, res) {
         .exec()
         .then((report) => {
             res.status(report ? 204 : 404).end();
+        })
+        .catch(handleError(res));
+}
+
+export function approve(req, res) {
+    Report.findOne({
+        _id: req.params.id,
+        isApproved: { $eq: null }
+    })
+        .exec()
+        .then((report) => {
+            if (!report) {
+                return res.sendStatus(404);
+            }
+
+            Spam.findOne({ "profile.id": report.profile.id })
+                .exec()
+                .then((spam) => {
+                    if (spam) {
+                        return;
+                    }
+
+                    const newSpam = new Spam({
+                        username: report.profile.screen_name,
+                        profile: report.profile,
+                    });
+
+                    return newSpam
+                        .save()
+                        .then((spam) => {
+                            const newQueue = new Queue({
+                                spamId: spam.id,
+                                username: report.profile.screen_name
+                            });
+
+                            newQueue.save();
+                        });
+                });
+
+            report.isApproved = true;
+            report.save().then((report) => res.json(report));
+        })
+        .catch(handleError(res));
+}
+
+export function reject(req, res) {
+    Report.findOne({
+        _id: req.params.id,
+        isApproved: { $eq: null }
+    })
+        .exec()
+        .then((report) => {
+            if (!report) {
+                return res.sendStatus(404);
+            }
+
+            report.isApproved = false;
+            report.save().then((report) => res.json(report));
+        })
+        .catch(handleError(res));
+}
+
+export function ban(req, res) {
+    Report.findOne({
+        _id: req.params.id,
+        isApproved: { $ne: false }
+    })
+        .exec()
+        .then((report) => {
+            if (!report) {
+                return res.sendStatus(404);
+            }
+
+            rp({
+                method: "POST",
+                uri: `${config.blockUrl}/${config.blockRoute}`,
+                body: {
+                    username: report.username
+                },
+                json: true
+            }).then((result) => {
+                res.json(result);
+            }).catch(handleError(res));
         })
         .catch(handleError(res));
 }

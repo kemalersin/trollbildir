@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "main": "server/index.js",
   "dependencies": {
+    "@crystalui/angular-lightbox": "^1.0.6",
     "async": "^3.2.0",
     "babel-core": "^6.18.2",
     "babel-plugin-angular2-annotations": "^5.1.0",
@@ -43,6 +44,7 @@
     "passport-local": "^1.0.0",
     "passport-twitter": "^1.0.3",
     "pug": "^2.0.0",
+    "request-promise": "^4.2.5",
     "serve-favicon": "^2.3.0",
     "twitter": "^1.7.1"
   },

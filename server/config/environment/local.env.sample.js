@@ -5,6 +5,7 @@
 
 module.exports = {
     DOMAIN: 'http://localhost:9000',
+    BLOCK_URL: 'http://localhost:8081/api/blocks/',
     SESSION_SECRET: 'trollbildir-secret',
 
     TWITTER_ID: 'app-id',
@@ -17,6 +18,8 @@ module.exports = {
     SPAM_ROUTE: 'spam',
     SPAM_LIMIT_PER_APP: 900000,
     SPAM_LIMIT_PER_USER: 900,
+
+    BLOCK_ROUTE: 'block',
 
     REDIRECT_URL: 'https://twitter.com/isimsizhareket'
 };

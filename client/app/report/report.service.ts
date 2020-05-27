@@ -46,4 +46,22 @@ export class ReportService {
             .delete(`/api/reports/${report.id || report._id}`)
             .pipe(map(() => report));
     }
+
+    ban(report) {
+        return this.http
+            .get(`/api/reports/ban/${report.id || report._id}`)
+            .pipe(map(() => report));
+    }
+
+    approve(report) {
+        return this.http
+            .get(`/api/reports/approve/${report.id || report._id}`)
+            .pipe(map(() => report));
+    }
+
+    reject(report) {
+        return this.http
+            .get(`/api/reports/reject/${report.id || report._id}`)
+            .pipe(map(() => report));
+    }
 }

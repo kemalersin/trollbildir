@@ -1,18 +1,20 @@
-import { Component } from '@angular/core';
+import { Component } from "@angular/core";
 
-import { Router } from '@angular/router';
-import { AuthService } from '../auth/auth.service';
+import { Router } from "@angular/router";
+import { AuthService } from "../auth/auth.service";
 
 @Component({
-    selector: 'navbar',
-    template: require('./navbar.pug'),
+    selector: "navbar",
+    template: require("./navbar.pug"),
 })
 export class NavbarComponent {
     isCollapsed = true;
-    menu = [{
-        title: 'Ana Sayfa',
-        link: '/anasayfa',
-    }];
+    menu = [
+        {
+            title: "Ana Sayfa",
+            link: "/anasayfa",
+        },
+    ];
     Router;
     isAdmin;
     isMember;
@@ -28,33 +30,34 @@ export class NavbarComponent {
 
         this.reset();
 
-        this.AuthService.currentUserChanged.subscribe(user => {
+        this.AuthService.currentUserChanged.subscribe((user) => {
             this.currentUser = user;
             this.reset();
         });
     }
 
     reset() {
-        this.AuthService.isLoggedIn().then(is => {
+        this.AuthService.isLoggedIn().then((is) => {
             this.isLoggedIn = is;
         });
 
-        this.AuthService.isMember().then(is => {
+        this.AuthService.isMember().then((is) => {
             this.isMember = is;
         });
 
-        this.AuthService.isAdmin().then(is => {
+        this.AuthService.isAdmin().then((is) => {
             this.isAdmin = is;
         });
-        
-        this.AuthService.getCurrentUser().then(user => {
+
+        this.AuthService.getCurrentUser().then((user) => {
             this.currentUser = user;
         });
     }
 
     logout() {
         return this.AuthService.logout().then(() => {
-            this.Router.navigateByUrl('/anasayfa');
+            this.Router.navigateByUrl("/anasayfa");
             this.reset();
         });
-    }}
+    }
+}

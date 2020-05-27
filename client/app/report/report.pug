@@ -33,27 +33,55 @@
                   (click)='get("onaylanmayanlar")'
                 )
                 | Onaylanmayanlar               
-            .col-xs-12.col-sm-4
+            .col-xs-12.col-sm-4(*ngIf='currentUser.role=="user"')
               a.btn.btn-default.pull-right(routerLink='/bildir') Bildir
   .row
     .col-md-12
       p.text-center
         span(*ngIf='count===-1') Kayıtlar listeleniyor...
         span(*ngIf='count===0') Kayıt bulunamadı!
-        span(*ngIf='count>0') Toplam {{count}} bildirilmiş kullanıcı:
+        span(*ngIf='count>0') Toplam {{count}} önerilmiş kullanıcı:
       br
   .row(infiniteScroll,
       [infiniteScrollDistance]='0.1',
       [infiniteScrollThrottle]='50',
       (scrolled)='onScroll()'
     )
-    .col-md-3(*ngFor='let report of reports')
+    .col-md-4(*ngFor='let report of reports')
       .panel.panel-default
         .panel-body
           p.text-center
             img.profile-image.img-circle([src]='report.profile.profile_image_url_https', width='48', height='48')
           h4.text-center
             a([attr.href]='"https://www.twitter.com/" + report.username', target='_blank') {{report.username}}
-          p.text-center
-            a.trash(*ngIf='filter=="onay-bekleyenler"', (click)='delete(report)')
-              span.fa.fa-trash.fa-2x
+          blockquote
+            p {{report.notes}}
+          p.info.small
+            span(*ngIf='currentUser.role!="user"')
+              a([attr.href]='"https://www.twitter.com/" + report.reportedBy', target='_blank') {{report.reportedBy}}
+              span &nbsp;tarafından&nbsp;
+            span([ngClass]='{ "pull-right": currentUser.role=="user" }') {{report.createdAt | date: 'short'}} tarihinde bildirildi.
+          p.commands
+            img(*ngIf='report.picture',
+              src='/assets/images/panorama.png',
+              lightbox, title="Görseli görüntüle",
+              [fullImage]='{path: "/api/images/" + report.picture}',
+              closeButtonText='Kapat')         
+            span(*ngIf='currentUser.role!="user" && report.isApproved==null && (!filter || filter=="onay-bekleyenler")', )
+              | &nbsp;&nbsp;
+              a.approve((click)='approve(report)', title="Onayla")
+                span.fa.fa-check
+              | &nbsp;&nbsp;
+              a.ban((click)='ban(report)', title="Engelle")
+                span.fa.fa-ban  
+              | &nbsp;&nbsp;             
+              a.not-approve((click)='reject(report)', title="Onaylama")
+                span.fa.fa-times 
+            span(*ngIf='filter=="onaylananlar" && currentUser.role!="user" && report.isApproved') 
+              | &nbsp;&nbsp;
+              a.ban((click)='ban(report)', title="Engelle")
+                span.fa.fa-ban                               
+            span(*ngIf='filter=="onay-bekleyenler" && currentUser.role=="user"')
+              | &nbsp;&nbsp;
+              a.trash((click)='delete(report)')
+                span.fa.fa-trash

@@ -1,6 +1,7 @@
 import {
     NgModule,
     ApplicationRef,
+    LOCALE_ID
 } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
@@ -9,6 +10,11 @@ import {
     createNewHosts,
     createInputTransfer,
 } from '@angularclass/hmr';
+
+import { registerLocaleData } from '@angular/common';
+import localeTR from "@angular/common/locales/tr";
+
+registerLocaleData(localeTR, "tr");
 
 import { RouterModule, Routes } from '@angular/router';
 
@@ -52,7 +58,8 @@ const appRoutes: Routes = [{
         AddReportModule
     ],
     declarations: [AppComponent],
-    bootstrap: [AppComponent],
+    providers: [{provide: LOCALE_ID, useValue: 'tr'}],
+    bootstrap: [AppComponent]
 })
 export class AppModule {
     static parameters = [ApplicationRef];

@@ -3,6 +3,7 @@ import { BrowserModule } from "@angular/platform-browser";
 import { RouterModule, Routes } from "@angular/router";
 
 import { InfiniteScrollModule } from "ngx-infinite-scroll";
+import { CrystalLightboxModule } from "@crystalui/angular-lightbox";
 
 import { AuthGuard } from "../../components/auth/auth-guard.service";
 import { ReportService } from "./report.service";
@@ -18,6 +19,11 @@ const ReportRoutes: Routes = [
         path: "bildirimlerim",
         component: ReportComponent,
         canActivate: [AuthGuard],
+    },
+    {
+        path: "oneriler",
+        component: ReportComponent,
+        canActivate: [AuthGuard],
     }
 ];
 
@@ -26,6 +32,7 @@ const ReportRoutes: Routes = [
         BrowserModule,
         RouterModule.forChild(ReportRoutes),
         InfiniteScrollModule,
+        CrystalLightboxModule,
     ],
     declarations: [ReportComponent],
     exports: [ReportComponent],

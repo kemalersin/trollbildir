@@ -14,7 +14,9 @@
         li(*ngIf='isAdmin', routerLinkActive='active')
           a(routerLink='/ekip') Ekip
         li(*ngIf='isMember', routerLinkActive='active')
-          a(routerLink='/uyeler') Üyeler 
+          a(routerLink='/uyeler') Üyeler
+        li(*ngIf='isMember', routerLinkActive='active')
+          a(routerLink='/oneriler') Öneriler            
         li(*ngIf='isMember', routerLinkActive='active')
           a(routerLink='/bildirilenler') Bildirilenler     
         li(*ngIf='currentUser.role=="user"', routerLinkActive='active')

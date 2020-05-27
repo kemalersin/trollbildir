@@ -1,0 +1,47 @@
+blockquote {
+    height: 150px;
+    position: relative;    
+    margin-bottom: 15px;
+
+    p {
+        font-size: 14px;
+        overflow: hidden;
+        height: 138px;
+    }
+}
+
+p.info {
+    margin-bottom: 0px;
+    display: inline-block;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden !important;
+    text-overflow: ellipsis;
+}
+
+.commands {
+    position: absolute;
+    right: 28px;
+    top: 10px;
+
+    a {
+        cursor: pointer;
+
+        &.approve {
+            color: #42A948;
+        }
+
+        &.not-approve {
+            color: rgb(209, 91, 71);
+        }
+    }
+
+    .fa {
+        font-size: 22px;
+    }
+
+    img[lightbox] {
+        cursor: pointer;
+        margin-bottom: 8px;
+    }
+}
