@@ -70,12 +70,19 @@ export class SpamComponent implements OnInit {
             this.newSpam = "";
 
             return this.spamService.create({ username: spam }).subscribe(
-                (spam) => {
-                    this.username
-                        ? this.router.navigate(["/bildirilenler"])
-                        : this.spams.unshift(spam);
+                (spams) => {
+                    if (this.username) {
+                        return this.router.navigate(["/bildirilenler"]);
+                    }
 
-                    this.count++;
+                    if (Array.isArray(spams)) {
+                        this.spams = [...spams, ...this.spams];
+                        this.count += spams.length;    
+                    }
+                    else {
+                        this.spams.unshift(spams);
+                        this.count++;    
+                    }
                 },
                 (res) => {
                     if (res.status === 302) {

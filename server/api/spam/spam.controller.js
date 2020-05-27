@@ -1,4 +1,3 @@
-import fs from "fs";
 import async from "async";
 import Twitter from "twitter";
 
@@ -20,6 +19,56 @@ function getTwitter(user) {
         consumer_secret: config.twitter.clientSecret,
         access_token_key: user.accessToken,
         access_token_secret: user.accessTokenSecret,
+    });
+}
+
+function createMultiple(req, res, usernames) {
+    var spams = [];
+    const twitter = getTwitter(req.user);
+
+    async.eachSeries(usernames, (username, cb) => {
+        username = username.trim();
+
+        twitter
+            .get("users/show", { screen_name: username })
+            .then((profile) => {
+                if (profile.id == req.user.profile.id) {
+                    return cb();
+                }
+
+                Spam.findOne({ "profile.id": profile.id })
+                    .exec()
+                    .then((spam) => {
+                        if (spam) {
+                            return cb();
+                        }
+
+                        const newSpam = new Spam({
+                            username: profile.screen_name,
+                            profile: profile,
+                        });
+
+                        newSpam
+                            .save()
+                            .then((spam) => {
+                                const newQueue = new Queue({
+                                    spamId: spam.id,
+                                    username: profile.screen_name
+                                });
+
+                                newQueue.save();
+
+                                spams.push(spam);
+
+                                cb();
+                            })
+                            .catch(() => cb());
+                    })
+                    .catch(() => cb());
+            })
+            .catch(() => cb());
+    }, (err) => {
+        res.status(200).json(spams);
     });
 }
 
@@ -47,8 +96,16 @@ export function index(req, res) {
 }
 
 export function create(req, res) {
-    const username = req.body.username;
     const twitter = getTwitter(req.user);
+
+    var username = req.body.username;
+    var usernames = username.split(",");
+
+    if (usernames.length > 1) {
+        return createMultiple(req, res, usernames);
+    }
+
+    username = username.trim();
 
     twitter
         .get("users/show", { screen_name: username })
@@ -75,6 +132,7 @@ export function create(req, res) {
                         .save()
                         .then((spam) => {
                             const newQueue = new Queue({
+                                spamId: spam.id,
                                 username: profile.screen_name
                             });
 
@@ -108,6 +166,10 @@ export function show(req, res, next) {
 }
 
 export function destroy(req, res) {
+    Queue.deleteMany({
+        spamId: req.params.id
+    }).exec();
+
     return Spam.findByIdAndRemove(req.params.id)
         .exec()
         .then(() => {
@@ -118,6 +180,7 @@ export function destroy(req, res) {
 
 export function queue(req, res) {
     let newQueue = new Queue({
+        spamId: req.body._id,
         username: req.body.username
     });
 
@@ -158,7 +221,10 @@ export function spam(req, res) {
 
                             async.eachSeries(queues, (queue, cbInner) => {
                                 twitter
-                                    .post("users/report_spam", { screen_name: queue.username })
+                                    .post("users/report_spam", {
+                                        screen_name: queue.username,
+                                        perform_block: false
+                                    })
                                     .then((spamed) => {
                                         console.log(spamed);
 

@@ -4,6 +4,7 @@ import {
     Strategy as TwitterStrategy
 } from 'passport-twitter';
 
+import Queue from '../../api/spam/queue.model';
 import Member from '../../api/member/member.model';
 
 export function setup(User, config) {
@@ -39,20 +40,26 @@ export function setup(User, config) {
                         return done(null, user);
                     }
 
-                    user = new User({
-                        name: profile.displayName,
-                        username: profile.username,
-                        email: profile._json.email,
-                        profile: profile._json,
-                        accessToken: token,
-                        accessTokenSecret: tokenSecret,
-                        lastSpamId: null,
-                        role
-                    });
+                    Queue.findOne({}, "id")
+                        .sort({ _id: -1 })
+                        .then((queue) => {
+                            user = new User({
+                                name: profile.displayName,
+                                username: profile.username,
+                                email: profile._json.email,
+                                profile: profile._json,
+                                accessToken: token,
+                                accessTokenSecret: tokenSecret,
+                                lastQueueId: queue ? queue.id : null,
+                                role
+                            });
 
-                    user.save()
-                        .then(savedUser => done(null, savedUser))
-                        .catch(err => done(err));
+                            user.save()
+                                .then(savedUser => done(null, savedUser))
+                                .catch(err => done(err));
+                        });
+
+
                 })
                 .catch(err => done(err));
         }));
