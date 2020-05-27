@@ -4,7 +4,7 @@
       .panel.panel-default
         .panel-body
           .row.vcenter
-            .col-xs-12.col-sm-8
+            .col-xs-12.col-sm-8.filters([ngClass]='{ "with-button": currentUser.role=="user" }')
               label.radio-inline
                 input(type='radio',
                   name='approve',

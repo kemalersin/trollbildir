@@ -1,6 +1,6 @@
 blockquote {
     height: 150px;
-    position: relative;    
+    position: relative;
     margin-bottom: 15px;
 
     p {
@@ -43,5 +43,19 @@ p.info {
     img[lightbox] {
         cursor: pointer;
         margin-bottom: 8px;
+    }
+}
+
+@media screen and (max-width:767px) {
+    .filters.with-button {
+        label.radio-inline:not(:first-child) {
+            margin-left: 0px;
+        }
+    }
+
+    .filters:not(.with-button) {
+        label.radio-inline:last-child {
+            margin-left: 0px;
+        }
     }
 }

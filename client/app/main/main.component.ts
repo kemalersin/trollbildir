@@ -28,7 +28,7 @@ export class MainComponent implements OnInit {
                     if (isUser) {
                         this.interval = setInterval(() => {
                             window.location.href = redirectUrl;
-                        }, 1000 * 5);
+                        }, 1000 * 60);
                     }
                 });
             });

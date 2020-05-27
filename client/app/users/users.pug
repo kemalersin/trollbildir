@@ -30,4 +30,4 @@
             img.profile-image.img-circle([src]='user.profile.profile_image_url_https', width='48', height='48')
           h4.text-center
             a([attr.href]='"https://www.twitter.com/" + user.username', target='_blank') {{user.username}}
-          p.text-center {{user.email}}
+          p.text-center {{user.email ? user.email : "E-posta adresi yok."}}
