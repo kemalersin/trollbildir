@@ -11,12 +11,14 @@ export const redirectUrl = process.env.REDIRECT_URL || 'https://twitter.com/isim
 export const userRoles = ['user', 'member', 'admin'];
 
 export const dataLimit = 20;
+export const maxFileSize = 1024 * 500;
 
 export default {
     env,
     port,
     userRoles,
     dataLimit,
+    maxFileSize,
     redirectUrl,
     spamRoute,
     spamLimitPerApp,

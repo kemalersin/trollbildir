@@ -1,0 +1,19 @@
+form((keyup.enter)='addTroll()', autocomplete='off')
+  .panel.panel-info.centered
+    .panel-heading
+      h4.text-center Troll Bildirin
+    .panel-body
+      .form-group
+        label(for='username') Kullanıcı adı:
+        input#username.form-control(type='text', name='username', [(ngModel)]='username', autofocus)
+      .form-group
+        label(for='notes') Bildirme nedeni:
+        textarea#notes.form-control(name='notes', rows='4', cols='50', maxlength='280', [(ngModel)]='notes')
+      .form-group
+        <input #fileInput type='file' name='file' (change)='handleFileInput($event.target.files)' />
+    .panel-footer.text-right
+      button.btn.btn-primary(type='submit', (click)='addTroll()', [disabled]='submitting')
+        span(*ngIf='!submitting') Gönder
+        i.fa.fa-spinner.fa-spin(*ngIf='submitting')
+      | &nbsp;
+      a.btn.btn-default(routerLink='/bildirimlerim', ngClass='{ disabled: submitting }') Vazgeç

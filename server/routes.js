@@ -14,6 +14,7 @@ export default function (app) {
     var env = process.env.NODE_ENV;
 
     app.use('/api/spams', require('./api/spam'));
+    app.use('/api/reports', require('./api/report'));
     app.use('/api/users', require('./api/user'));
     app.use('/api/members', require('./api/member'));
     app.use('/auth', require('./auth').default);

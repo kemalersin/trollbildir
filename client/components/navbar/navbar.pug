@@ -16,7 +16,9 @@
         li(*ngIf='isMember', routerLinkActive='active')
           a(routerLink='/uyeler') Üyeler 
         li(*ngIf='isMember', routerLinkActive='active')
-          a(routerLink='/bildirilenler') Bildirilenler                   
+          a(routerLink='/bildirilenler') Bildirilenler     
+        li(*ngIf='currentUser.role=="user"', routerLinkActive='active')
+          a(routerLink='/bildirimlerim') Bildirimlerim                                     
       ul.nav.navbar-nav.navbar-right
         li(*ngIf='isLoggedIn')
           p.navbar-text Selam {{ currentUser.name }}

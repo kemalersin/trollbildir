@@ -4,7 +4,11 @@ h3.centered
   br
   p.text-center(*ngIf='isLoggedIn')
     | &nbsp; Katıldığınız için teşekkürler!
-  p.small.text-center(*ngIf='isUser') Birazdan Twitter adresimize yönleneceksiniz...
+  p.small.text-center(*ngIf='isUser')
+    | Birazdan Twitter adresimize yönleneceksiniz...
+  br
+  p.small.text-center(*ngIf='isUser')
+    a(routerLink='/bildirimlerim') Troll bildirmek için tıklayın.
   p.text-center(*ngIf='!isLoggedIn')
     a.btn.btn-primary.btn-lg(href='/auth/twitter')
       i.fa.fa-twitter

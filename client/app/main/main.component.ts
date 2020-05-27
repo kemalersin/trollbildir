@@ -11,6 +11,7 @@ import { AuthService } from "../../components/auth/auth.service";
 export class MainComponent implements OnInit {
     isUser;
     isLoggedIn;
+    interval;
 
     static parameters = [AuthService];
 
@@ -25,7 +26,7 @@ export class MainComponent implements OnInit {
                     this.isUser = isUser;
 
                     if (isUser) {
-                        setTimeout(() => {
+                        this.interval = setInterval(() => {
                             window.location.href = redirectUrl;
                         }, 1000 * 5);
                     }
@@ -35,4 +36,10 @@ export class MainComponent implements OnInit {
     }
 
     ngOnInit() {}
+
+    ngOnDestroy() {
+        if (this.interval) {
+            clearInterval(this.interval);
+        }
+    }
 }

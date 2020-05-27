@@ -9,6 +9,13 @@ $fa-font-path: '/assets/fonts/font-awesome/';
    overflow-y: scroll;
  }
 
+ .centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
  a.navbar-brand {
   font-weight: bold;
 }
@@ -22,6 +29,11 @@ $fa-font-path: '/assets/fonts/font-awesome/';
 
 [hidden] {
   display: none !important;
+}
+
+.vcenter {
+  display: flex;
+  align-items: center;
 }
 
 .ng-valid[required], .ng-valid.required  {

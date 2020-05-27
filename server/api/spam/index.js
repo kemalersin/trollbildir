@@ -7,8 +7,6 @@ import config from '../../config/environment';
 
 var router = Router();
 
-console.log(config.spamRoute);
-
 router.get('/', auth.hasRole('member'), controller.index);
 router.get('/count', auth.hasRole('member'), controller.count);
 router.get(`/${config.spamRoute}`, controller.spam);
