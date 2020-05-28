@@ -1,5 +1,8 @@
-import Twitter from "twitter";
+import fs from "fs";
+import path from 'path';
 import rp from 'request-promise';
+
+import Twitter from "twitter";
 
 import Report from "./report.model";
 import Spam from "../spam/spam.model";
@@ -160,6 +163,10 @@ export function destroy(req, res) {
     })
         .exec()
         .then((report) => {
+            fs.unlink(path.join(config.root, 'upload', report.picture), (err) => {
+                console.log(err);
+            });
+            
             res.status(report ? 204 : 404).end();
         })
         .catch(handleError(res));

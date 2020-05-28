@@ -10,7 +10,7 @@ form((keyup.enter)='addTroll()', autocomplete='off')
         label(for='notes') Bildirme nedeni:
         textarea#notes.form-control(name='notes', rows='4', cols='50', maxlength='280', [(ngModel)]='notes')
       .form-group
-        <input #fileInput type='file' name='file' (change)='handleFileInput($event.target.files)' />
+        <input #fileInput type="file" name="file" [imageToDataUrl]="imageOptions" accept="image/x-png,image/jpeg" (imageSelected)="imageSelected($event)" />
     .panel-footer.text-right
       button.btn.btn-primary(type='submit', (click)='addTroll()', [disabled]='submitting')
         span(*ngIf='!submitting') Gönder

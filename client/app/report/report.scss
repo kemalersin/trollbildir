@@ -46,15 +46,16 @@ p.info {
     }
 }
 
-@media screen and (max-width:767px) {
-    .filters.with-button {
-        label.radio-inline:not(:first-child) {
-            margin-left: 0px;
-        }
+.panel.report {
+    .panel-body {
+        padding-bottom: 10px;
     }
+}
 
-    .filters:not(.with-button) {
-        label.radio-inline:last-child {
+@media screen and (max-width:767px) {
+    .filters {
+        label.radio-inline {
+            display: block;
             margin-left: 0px;
         }
     }

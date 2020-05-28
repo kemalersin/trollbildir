@@ -3,6 +3,8 @@ import { BrowserModule } from "@angular/platform-browser";
 import { FormsModule } from "@angular/forms";
 import { RouterModule, Routes } from "@angular/router";
 
+import { ImageToDataUrlModule } from "ngx-image2dataurl";
+
 import { AuthGuard } from "../../../components/auth/auth-guard.service";
 import { ReportService } from "../report.service";
 import { AddReportComponent } from "./add.report.component";
@@ -19,6 +21,7 @@ const AddReportRoutes: Routes = [
     imports: [
         BrowserModule,
         FormsModule,
+        ImageToDataUrlModule,
         RouterModule.forChild(AddReportRoutes)
     ],
     declarations: [AddReportComponent],

@@ -4,7 +4,7 @@
       .panel.panel-default
         .panel-body
           .row.vcenter
-            .col-xs-12.col-sm-8.filters([ngClass]='{ "with-button": currentUser.role=="user" }')
+            .col-xs-12.col-sm-8.filters
               label.radio-inline
                 input(type='radio',
                   name='approve',
@@ -48,7 +48,7 @@
       (scrolled)='onScroll()'
     )
     .col-md-4(*ngFor='let report of reports')
-      .panel.panel-default
+      .panel.panel-default.report
         .panel-body
           p.text-center
             img.profile-image.img-circle([src]='report.profile.profile_image_url_https', width='48', height='48')

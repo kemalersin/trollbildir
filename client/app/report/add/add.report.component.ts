@@ -3,6 +3,8 @@ import { Location } from "@angular/common";
 import { finalize } from "rxjs/operators";
 import { Router, ActivatedRoute } from "@angular/router";
 
+import { Options, ImageResult } from "ngx-image2dataurl";
+
 import { maxFileSize } from "../../app.constants";
 import { ReportService } from "../report.service";
 
@@ -20,6 +22,13 @@ export class AddReportComponent implements OnInit {
 
     @ViewChild("fileInput") fileInput: ElementRef;
 
+    imageOptions: Options = {
+        resize: {
+            maxHeight: 640,
+        },
+        allowedExtensions: ["JPG", "PNG"],
+    };
+
     static parameters = [Location, ActivatedRoute, Router, ReportService];
 
     constructor(
@@ -36,8 +45,25 @@ export class AddReportComponent implements OnInit {
 
     ngOnInit() {}
 
-    handleFileInput(files: FileList) {
-        this.fileToUpload = files.item(0);
+    imageSelected(imageResult: ImageResult) {
+        const dataURLtoBlob = (dataURL) => {
+            var arr = dataURL.split(","),
+                mime = arr[0].match(/:(.*?);/)[1],
+                bstr = atob(arr[1]),
+                n = bstr.length,
+                u8arr = new Uint8Array(n);
+
+            while (n--) {
+                u8arr[n] = bstr.charCodeAt(n);
+            }
+
+            return new Blob([u8arr], { type: mime });
+        };
+
+        this.fileToUpload = new File(
+            [dataURLtoBlob(imageResult.resized.dataURL)],
+            imageResult.file.name
+        );
 
         if (this.fileToUpload.size > maxFileSize) {
             alert(`Dosya boyutu ${maxFileSize / 1024} KB'tan fazla olamaz!`);
