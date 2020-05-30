@@ -20,6 +20,26 @@ $fa-font-path: '/assets/fonts/font-awesome/';
   font-weight: bold;
 }
 
+a[target='_blank'] {
+  &:visited,
+  &:link,
+  &:active {
+      &.text-info {
+          color: #3a87ad;
+      }
+
+      text-decoration: none;
+  }
+
+  &:hover {
+      &.text-info {
+          color: #2d6987;
+      }
+
+      text-decoration: underline;
+  }
+}
+
 .browserupgrade {
   margin: 0.2em 0;
   background: #ccc;

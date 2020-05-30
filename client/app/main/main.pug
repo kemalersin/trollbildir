@@ -6,10 +6,17 @@ h3.centered(*ngIf="isLoaded")
     | &nbsp; Katıldığınız için teşekkürler!
   p.small.text-center(*ngIf='isUser')
     | 1 dakika içinde Twitter adresimize yönlendirileceksiniz...
-  br
+    br
   p.small.text-center(*ngIf='isUser')
     a(routerLink='/bildirimlerim') Troll bildirmek için tıklayın.
   p.text-center(*ngIf='!isLoggedIn')
     a.btn.btn-primary.btn-lg(href='/auth/twitter')
       i.fa.fa-twitter
       | &nbsp; Aramıza Katıl
+    br
+  br
+  p.small.text-center
+    | &nbsp;&nbsp;&nbsp;
+    i.fa.fa-telegram.text-info &nbsp;
+    a.text-info(href='https://t.me/IsimsizlerHareketi', target='_blank')
+      | Telegram kanalımıza üye olmak için tıklayın.
