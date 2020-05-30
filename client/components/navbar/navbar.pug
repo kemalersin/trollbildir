@@ -9,7 +9,7 @@
       a.navbar-brand(href='/') trollbildir
     #navbar-main.navbar-collapse.collapse([collapse]='isCollapsed')
       ul.nav.navbar-nav
-        li(*ngFor='let item of menu', routerLinkActive='active')
+        li(*ngFor='let item of menu', routerLinkActive='active', [routerLinkActiveOptions]='{ exact: true }')
           a(routerLink='{{item.link}}') {{item.title}}
         li(*ngIf='isAdmin', routerLinkActive='active')
           a(routerLink='/ekip') Ekip

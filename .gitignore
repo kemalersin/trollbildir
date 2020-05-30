@@ -8,6 +8,6 @@ client/app.html
 dist
 /server/config/local.env.js
 ecosystem.config.js
-upload/*
+/upload/*
 npm-debug.log
 coverage

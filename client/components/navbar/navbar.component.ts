@@ -12,7 +12,7 @@ export class NavbarComponent {
     menu = [
         {
             title: "Ana Sayfa",
-            link: "/anasayfa",
+            link: "/",
         },
     ];
     Router;
@@ -56,7 +56,7 @@ export class NavbarComponent {
 
     logout() {
         return this.AuthService.logout().then(() => {
-            this.Router.navigateByUrl("/anasayfa");
+            this.Router.navigateByUrl("/");
             this.reset();
         });
     }

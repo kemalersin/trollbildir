@@ -1,4 +1,5 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, OnDestroy } from "@angular/core";
+import { setInterval, clearInterval } from "timers";
 
 import { redirectUrl } from "../app.constants";
 import { AuthService } from "../../components/auth/auth.service";
@@ -8,37 +9,58 @@ import { AuthService } from "../../components/auth/auth.service";
     template: require("./main.pug"),
     styles: [require("./main.scss")],
 })
-export class MainComponent implements OnInit {
+export class MainComponent implements OnInit, OnDestroy {
     isUser;
+    isLoaded;
     isLoggedIn;
     interval;
+
+    redirect;
+
+    currentUser = {};
 
     static parameters = [AuthService];
 
     constructor(private authService: AuthService) {
-        this.isLoggedIn = !!authService.getToken();
+        this.reset();
 
         this.authService.currentUserChanged.subscribe((user) => {
-            this.authService.isLoggedIn().then((is) => {
-                this.isLoggedIn = is;
+            this.currentUser = user;
+            this.reset();
+        });
+    }
 
-                this.authService.isUser().then((isUser) => {
-                    this.isUser = isUser;
+    reset() {
+        this.authService.isLoggedIn().then((is) => {
+            this.isLoaded = true;
+            this.isLoggedIn = is;
+        });
 
-                    if (isUser) {
-                        this.interval = setInterval(() => {
-                            window.location.href = redirectUrl;
-                        }, 1000 * 60);
+        this.authService.getCurrentUser().then((user) => {
+            this.currentUser = user;
+        });
+
+        this.authService.isUser().then((isUser) => {
+            this.isUser = isUser;
+
+            if (isUser) {
+                this.redirect = true;
+
+                this.interval = setInterval(() => {
+                    if (this.redirect) {
+                        window.location.href = redirectUrl;
                     }
-                });
-            });
+                }, 1000 * 60);
+            }
         });
     }
 
     ngOnInit() {}
 
     ngOnDestroy() {
-        if (this.interval) {
+        this.redirect = false;
+
+        if (this.interval) {            
             clearInterval(this.interval);
         }
     }

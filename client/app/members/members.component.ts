@@ -41,10 +41,10 @@ export class MembersComponent implements OnInit {
 
     addMember() {
         if (this.newMember) {
-            let members = this.newMember;
+            let member = this.newMember;
             this.newMember = '';
 
-            return this.membersService.create({ username: members })
+            return this.membersService.create({ username: member })
                 .subscribe((members) => {
                     this.username ? this.router.navigate(['/bildirilenler']) :
                         this.members.unshift(members);
@@ -53,10 +53,10 @@ export class MembersComponent implements OnInit {
                 }, (res) => {
                     if (res.status === 302) {
                         if (res.error.username) {
-                            members = res.error.username
+                            member = res.error.username
                         }
 
-                        return this.router.navigate(['/bildirilenler', members]);
+                        return this.router.navigate(['/bildirilenler', member]);
                     }
 
                     alert(res.error)

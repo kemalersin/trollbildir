@@ -10,7 +10,7 @@ import { MainComponent } from './main.component';
 
 
 export const ROUTES: Routes = [
-    { path: 'anasayfa', component: MainComponent },
+    { path: '', component: MainComponent },
 ];
 
 

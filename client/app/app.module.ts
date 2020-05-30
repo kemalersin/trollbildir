@@ -1,42 +1,41 @@
-import {
-    NgModule,
-    ApplicationRef,
-    LOCALE_ID
-} from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
+import { NgModule, ApplicationRef, LOCALE_ID } from "@angular/core";
+import { BrowserModule } from "@angular/platform-browser";
+import { HttpClientModule } from "@angular/common/http";
 import {
     removeNgStyles,
     createNewHosts,
     createInputTransfer,
-} from '@angularclass/hmr';
+} from "@angularclass/hmr";
 
-import { registerLocaleData } from '@angular/common';
+import { registerLocaleData } from "@angular/common";
 import localeTR from "@angular/common/locales/tr";
 
 registerLocaleData(localeTR, "tr");
 
-import { RouterModule, Routes } from '@angular/router';
+import { RouterModule, Routes } from "@angular/router";
 
-import { AppComponent } from './app.component';
-import { MainModule } from './main/main.module';
-import { DirectivesModule } from '../components/directives.module';
-import { JwtModule } from '@auth0/angular-jwt';
-import { MembersModule } from './members/members.module';
-import { UsersModule } from './users/users.module';
-import { SpamModule } from './spam/spam.module';
-import { ReportModule } from './report/report.module';
-import { AddReportModule } from './report/add/add.report.module';
+import { AppComponent } from "./app.component";
+import { MainModule } from "./main/main.module";
+import { DirectivesModule } from "../components/directives.module";
+import { JwtModule } from "@auth0/angular-jwt";
+import { MembersModule } from "./members/members.module";
+import { UsersModule } from "./users/users.module";
+import { SpamModule } from "./spam/spam.module";
+import { ReportModule } from "./report/report.module";
+import { AddReportModule } from "./report/add/add.report.module";
 
 export function tokenGetter() {
-    return localStorage.getItem('id_token');
+    return localStorage.getItem("id_token");
 }
 
-const appRoutes: Routes = [{
-    path: '',
-    redirectTo: '/anasayfa',
-    pathMatch: 'full'
-}];
+const appRoutes: Routes = [
+    {
+        path: "",
+        redirectTo: "/",
+        pathMatch: "full",
+    },
+    { path: "**", redirectTo: "/" },
+];
 
 @NgModule({
     imports: [
@@ -45,20 +44,22 @@ const appRoutes: Routes = [{
         JwtModule.forRoot({
             config: {
                 tokenGetter,
-            }
+            },
         }),
-        RouterModule.forRoot(appRoutes, { enableTracing: process.env.NODE_ENV === 'development' }),
+        RouterModule.forRoot(appRoutes, {
+            enableTracing: process.env.NODE_ENV === "development",
+        }),
         MainModule,
         DirectivesModule,
         MembersModule,
         UsersModule,
         SpamModule,
         ReportModule,
-        AddReportModule
+        AddReportModule,
     ],
     declarations: [AppComponent],
-    providers: [{provide: LOCALE_ID, useValue: 'tr'}],
-    bootstrap: [AppComponent]
+    providers: [{ provide: LOCALE_ID, useValue: "tr" }],
+    bootstrap: [AppComponent],
 })
 export class AppModule {
     static parameters = [ApplicationRef];
@@ -68,37 +69,32 @@ export class AppModule {
 
     hmrOnInit(store) {
         if (!store || !store.state) return;
-        console.log('HMR store', store);
-        console.log('store.state.data:', store.state.data);
-        // inject AppStore here and update it
-        // this.AppStore.update(store.state)
-        if ('restoreInputValues' in store) {
+
+        if ("restoreInputValues" in store) {
             store.restoreInputValues();
         }
-        // change detection
+
         this.appRef.tick();
-        Reflect.deleteProperty(store, 'state');
-        Reflect.deleteProperty(store, 'restoreInputValues');
+
+        Reflect.deleteProperty(store, "state");
+        Reflect.deleteProperty(store, "restoreInputValues");
     }
 
     hmrOnDestroy(store) {
-        var cmpLocation = this.appRef.components.map(cmp => cmp.location.nativeElement);
-        // recreate elements
+        var cmpLocation = this.appRef.components.map(
+            (cmp) => cmp.location.nativeElement
+        );
         store.disposeOldHosts = createNewHosts(cmpLocation);
-        // inject your AppStore and grab state then set it on store
-        // var appState = this.AppStore.get()
-        store.state = { data: 'yolo' };
-        // store.state = Object.assign({}, appState)
-        // save input values
+
+        store.state = { data: "yolo" };
+
         store.restoreInputValues = createInputTransfer();
-        // remove styles
+
         removeNgStyles();
     }
 
     hmrAfterDestroy(store) {
-        // display new elements
         store.disposeOldHosts();
-        Reflect.deleteProperty(store, 'disposeOldHosts');
-        // anything you need done the component is removed
+        Reflect.deleteProperty(store, "disposeOldHosts");
     }
 }

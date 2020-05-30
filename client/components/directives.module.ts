@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 
 import { CollapseModule } from 'ngx-bootstrap';
 
-
 import { RouterModule } from '@angular/router';
 
 import { AuthModule } from './auth/auth.module';
@@ -16,7 +15,6 @@ import { FooterComponent } from './footer/footer.component';
         CommonModule,
         CollapseModule,
         AuthModule,
-
         RouterModule,
     ],
     declarations: [
