@@ -1,5 +1,5 @@
-const fs = require('fs')
-const stream = require('stream')
+const fs = require('fs');
+const stream = require('stream');
 
 export function show(req, res, next) {
     const r = fs.createReadStream('./upload/' + req.params.id)

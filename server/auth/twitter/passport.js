@@ -32,34 +32,33 @@ export function setup(User, config) {
             }).exec()
                 .then(user => {
                     if (user) {
-                        if (user.role != role) {
-                            user.role = role;
-                            user.save();
-                        }
+                        user.role = role;
+                        user.accessToken = token;
+                        user.accessTokenSecret = tokenSecret;
+                        
+                        user.save();
 
                         return done(null, user);
                     }
 
-                    user = new User({
-                        name: profile.displayName,
-                        username: profile.username,
-                        email: profile._json.email,
-                        profile: profile._json,
-                        accessToken: token,
-                        accessTokenSecret: tokenSecret,
-                        //lastQueueId: queue ? queue.id : null,
-                        role
-                    });
-
-                    user.save()
-                        .then(savedUser => done(null, savedUser))
-                        .catch(err => done(err));
-
-                    /*Queue.findOne({}, "id")
+                    Queue.findOne({}, "id")
                         .sort({ _id: -1 })
                         .then((queue) => {
+                            user = new User({
+                                name: profile.displayName,
+                                username: profile.username,
+                                email: profile._json.email,
+                                profile: profile._json,
+                                accessToken: token,
+                                accessTokenSecret: tokenSecret,
+                                lastQueueId: queue ? queue.id : null,
+                                role
+                            });
 
-                        });*/
+                            user.save()
+                                .then(savedUser => done(null, savedUser))
+                                .catch(err => done(err));
+                        });
                 })
                 .catch(err => done(err));
         }));
