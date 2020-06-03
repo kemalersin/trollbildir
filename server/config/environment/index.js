@@ -15,6 +15,8 @@ var all = {
     blockUrl: process.env.BLOCK_URL,
     blockRoute: process.env.BLOCK_ROUTE,
 
+    spamRoute: process.env.SPAM_ROUTE || 'spam',
+
     ip: process.env.IP || '0.0.0.0',
 
     seedDB: false,

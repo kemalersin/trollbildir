@@ -2,13 +2,17 @@ import async from "async";
 import Twitter from "twitter";
 
 import Spam from "./spam.model";
+import Log from "../log/log.model";
+import Stat from "../stat/stat.model";
 import Queue from "./queue.model";
 import User from "../user/user.model";
 import config from "../../config/environment";
 
 function handleError(res, statusCode) {
     statusCode = statusCode || 500;
+
     return function (err) {
+        console.log(err);
         return res.status(statusCode).send(err);
     };
 }
@@ -73,7 +77,9 @@ function createMultiple(req, res, usernames) {
 }
 
 export function count(req, res, next) {
-    return Spam.count({})
+    return Spam.count({
+        isDeleted: { $ne: true }
+    })
         .exec()
         .then((count) => {
             res.json(count);
@@ -84,7 +90,9 @@ export function count(req, res, next) {
 export function index(req, res) {
     var index = +req.query.index || 1;
 
-    return Spam.find({}, "-salt -password")
+    return Spam.find({
+        isDeleted: { $ne: true }
+    }, "-salt -password")
         .sort({ _id: -1 })
         .skip(--index * config.dataLimit)
         .limit(config.dataLimit)
@@ -120,7 +128,12 @@ export function create(req, res) {
                 .exec()
                 .then((spam) => {
                     if (spam) {
-                        return res.status(302).json(spam);
+                        if (!spam.isDeleted) {
+                            return res.status(302).json(spam);
+                        }
+
+                        Spam.findByIdAndDelete(spam._id).exec();
+                        Queue.deleteMany({ spamId: spam._id }).exec();
                     }
 
                     const newSpam = new Spam({
@@ -166,13 +179,16 @@ export function show(req, res, next) {
 }
 
 export function destroy(req, res) {
-    Queue.deleteMany({
-        spamId: req.params.id
-    }).exec();
+    const spamId = req.params.id;
 
-    return Spam.findByIdAndRemove(req.params.id)
+    return Spam.findById(spamId)
         .exec()
-        .then(() => {
+        .then(function (spam) {
+            spam.isDeleted = true;
+            spam.save();
+
+            Queue.updateMany({ spamId }, { $set: { isDeleted: true } }).exec();
+
             res.status(204).end();
         })
         .catch(handleError(res));
@@ -192,14 +208,23 @@ export function queue(req, res) {
 }
 
 export function spam(req, res) {
-    Queue.findOne({}, "id")
+    const sessionDate = new Date();
+
+    var failedSpams = [];
+
+    var success = 0;
+    var failed = 0;
+
+    Queue.findOne({ isDeleted: { $ne: true }}, "id")
         .sort({ _id: -1 })
         .then((queue) => {
-            if (!spam) {
+            if (!queue) {
                 return res.status(404).end();
             }
 
             User.find({
+                isLocked: { $ne: true },
+                isSuspended: { $ne: true },
                 $or: [
                     { lastQueueId: null },
                     { lastQueueId: { $lt: queue.id } },
@@ -215,11 +240,20 @@ export function spam(req, res) {
 
                         Queue.find(user.lastQueueId ? {
                             _id: { $gt: user.lastQueueId }
-                        } : {}).then((queues) => {
-                            let index = 0;
+                        } : { isNotFound: { $ne: true } }).then((queues) => {
                             let innerLimit = 0;
+                            let userSpamCounter = 0;
 
                             async.eachSeries(queues, (queue, cbInner) => {
+                                if (
+                                    queue.isDeleted ||
+                                    queue.isNotFound ||
+                                    failedSpams.indexOf(queue.username) !== -1
+                                ) {
+                                    userSpamCounter++;
+                                    return cbInner();
+                                }
+
                                 twitter
                                     .post("users/report_spam", {
                                         screen_name: queue.username,
@@ -227,14 +261,21 @@ export function spam(req, res) {
                                     })
                                     .then((spamed) => {
                                         if (!spamed["screen_name"]) {
+                                            failed++;
+                                            userSpamCounter++;
                                             return cbInner();
                                         }
+
+                                        success++;
+
+                                        queue.isSuspended = false;
+                                        queue.save();
 
                                         user.lastQueueId = queue.id;
 
                                         user.save().then(() => {
                                             if (
-                                                (++index === queues.length) ||
+                                                (++userSpamCounter === queues.length) ||
                                                 (++innerLimit === config.spamLimitPerUser) ||
                                                 (outerLimit++ === config.spamLimitPerApp)
                                             ) {
@@ -245,17 +286,55 @@ export function spam(req, res) {
                                         });
                                     })
                                     .catch((err) => {
-                                        console.log(err);
+                                        failed++;
+                                        console.log(user.username, queue.username, err);
 
-                                        if (
-                                            Array.isArray(err) && (
-                                                err[0].code == 34 ||
-                                                err[0].code == 89 ||
-                                                err[0].code == 205
-                                            )) {
-                                            return cbOuter();
+                                        if (Array.isArray(err)) {
+                                            let errCode = err[0]["code"];
+
+                                            if (errCode) {
+                                                Log.create({
+                                                    username: user.username,
+                                                    error: err[0],
+                                                    sessionDate,
+                                                });
+
+                                                if (
+                                                    errCode == 34 ||
+                                                    errCode == 50 ||
+                                                    errCode == 63
+                                                ) {
+                                                    (errCode == 63) ?
+                                                        queue.isSuspended = true :
+                                                        queue.isNotFound = true;
+
+                                                    queue.save();
+                                                    failedSpams.push(queue.username);
+                                                }
+                                                else {
+                                                    if (
+                                                        errCode == 64 ||
+                                                        errCode == 89 ||
+                                                        errCode == 326
+                                                    ) {
+                                                        if (errCode == 64) {
+                                                            user.isSuspended = true;
+                                                        }
+                                                        else {
+                                                            (errCode == 89) ?
+                                                                user.tokenExpired = true :
+                                                                user.isLocked = true;
+                                                        }
+
+                                                        user.save();
+                                                    }
+
+                                                    return cbOuter();
+                                                }
+                                            }
                                         }
 
+                                        userSpamCounter++;
                                         cbInner();
                                     });
                             });
@@ -264,6 +343,14 @@ export function spam(req, res) {
                         if (++outerLimit === config.spamLimitPerApp) {
                             return cbOuter();
                         }
+                    }, () => {
+                        let stat = new Stat({
+                            success,
+                            failed,
+                            sessionDate
+                        });
+
+                        stat.save();
                     })
                 });
         });

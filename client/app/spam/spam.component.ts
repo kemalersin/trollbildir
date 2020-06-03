@@ -1,11 +1,12 @@
-import {
-    Component,
-    OnInit,
-} from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { Location } from "@angular/common";
 import { finalize } from "rxjs/operators";
 import { Router, ActivatedRoute } from "@angular/router";
 
+import { Ngxalert } from "ngx-dialogs";
+import { ToastrService } from "ngx-toastr";
+
+import { errors } from "../app.constants";
 import { SpamService } from "./spam.service";
 
 @Component({
@@ -21,12 +22,21 @@ export class SpamComponent implements OnInit {
     index = 1;
     count = -1;
 
-    static parameters = [Location, ActivatedRoute, Router, SpamService];
+    alert: any = new Ngxalert();
+
+    static parameters = [
+        Location,
+        ActivatedRoute,
+        Router,
+        ToastrService,
+        SpamService,
+    ];
 
     constructor(
         private location: Location,
         private route: ActivatedRoute,
         private router: Router,
+        private toastr: ToastrService,
         private spamService: SpamService
     ) {
         this.route = route;
@@ -72,11 +82,10 @@ export class SpamComponent implements OnInit {
 
                     if (Array.isArray(spams)) {
                         this.spams = [...spams, ...this.spams];
-                        this.count += spams.length;    
-                    }
-                    else {
+                        this.count += spams.length;
+                    } else {
                         this.spams.unshift(spams);
-                        this.count++;    
+                        this.count++;
                     }
                 },
                 (res) => {
@@ -88,34 +97,48 @@ export class SpamComponent implements OnInit {
                         return this.router.navigate(["/bildirilenler", spam]);
                     }
 
-                    alert(res.error);
+                    if (res.status === 404) {
+                        return this.toastr.error(errors.userNotFound);
+                    }
+
+                    this.toastr.error(res.error);
                 }
             );
         }
     }
 
     queue(spam) {
-        if (
-            !confirm("Kullanıcıyı tekrar bildirmek istediğinize emin misiniz?")
-        ) {
-            return;
-        }
+        this.alert.create({
+            id: "spam-user",
+            title: "Kullanıcı Bildirilecektir",
+            message: "Tekrar bildirmek istediğinizden emin misiniz?",
+            customCssClass: "custom-alert",
+            confirm: () => {
+                this.alert.removeAlert("spam-user");
 
-        this.spamService
-            .queue(spam)
-            .subscribe(() =>
-                alert("Kullanıcı tekrar kuyruğa alındı.")
-            );
+                this.spamService
+                .queue(spam)
+                .subscribe(() =>
+                    this.toastr.error("Kullanıcı tekrar kuyruğa alındı.")
+                );
+            },
+        });
     }
 
     delete(spam) {
-        if (!confirm("Emin misiniz?")) {
-            return;
-        }
+        this.alert.create({
+            id: "remove-user",
+            title: "Kullanıcı Silinecektir",
+            message: "Silmek istediğinizden emin misiniz?",
+            customCssClass: "custom-alert",
+            confirm: () => {
+                this.alert.removeAlert("remove-user");
 
-        this.spamService.remove(spam).subscribe((spamedUser) => {
-            this.count--;
-            this.spams.splice(this.spams.indexOf(spamedUser), 1);
+                this.spamService.remove(spam).subscribe((spamedUser) => {
+                    this.count--;
+                    this.spams.splice(this.spams.indexOf(spamedUser), 1);
+                });
+            },
         });
     }
 }

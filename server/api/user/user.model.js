@@ -8,6 +8,18 @@ var UserSchema = new Schema({
     name: String,
     username: String,
     email: String,
+    isLocked: {
+        type: Boolean,
+        default: false
+    },    
+    isSuspended: {
+        type: Boolean,
+        default: false
+    },  
+    tokenExpired: {
+        type: Boolean,
+        default: false
+    },     
     role: {
         type: String,
         default: 'user'

@@ -1,11 +1,9 @@
 $fa-font-path: '/assets/fonts/font-awesome/';
+
+@import '~ngx-toastr/toastr.css';
 @import '~font-awesome/scss/font-awesome';
 
-/**
- * App-wide Styles
- */
-
- body {
+body {
    overflow-y: scroll;
  }
 
@@ -14,6 +12,14 @@ $fa-font-path: '/assets/fonts/font-awesome/';
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.navbar {
+  margin-bottom: 20px;
 }
 
  a.navbar-brand {
@@ -74,4 +80,72 @@ a[target='_blank'] {
 	cursor: pointer;
 	text-decoration: none;
 	color:rgb(209, 91, 71);
+}
+
+.toast-top-center {
+  top: 20px;
+
+  .ngx-toastr {
+    width: auto !important;
+    max-width: 350px;
+
+    &.toast-error {
+      background-color: #555;
+    }
+  }
+}
+
+.ngx-dialog.custom-alert {
+  z-index: 1001;
+
+  .ngx-dialog-footer {
+    padding-top: 20px !important;
+    margin-bottom: 5px;
+  }
+
+  button.ngx-dialog-btn {
+    padding: 10px;
+    min-width: 60px;
+  }
+
+  .ngx-dialog-btn-true {
+    color: #fff;
+    background-color: #e95420;
+    border-color: #cb400f;
+  }
+
+  .ngx-dialog-btn-cancel {
+    color: #555555;
+    background-color: #eeeeee;
+    border-color: #e2e2e2;
+  }
+
+  .ngx-dialog-btn-true,
+  .ngx-dialog-btn-cancel {
+    text-indent: -9999px;
+    line-height: 0;
+  }
+
+  .ngx-dialog-btn-true::after,
+  .ngx-dialog-btn-cancel::after {
+    text-indent: 0;
+    display: block;
+    line-height: initial;
+  }
+
+  .ngx-dialog-btn-true::after {
+    content: 'Evet';
+  }
+
+  .ngx-dialog-btn-cancel::after {
+    content: 'Hayır';
+  }
+}
+
+@media (min-width: 568px) {
+  .ngx-dialog.custom-alert {
+    .ngx-dialog-content {
+      width: 400px !important;
+    }
+  }
 }

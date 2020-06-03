@@ -2,6 +2,9 @@ import { Component, OnInit } from "@angular/core";
 
 import { Router, ActivatedRoute } from "@angular/router";
 
+import { Ngxalert } from "ngx-dialogs";
+import { ToastrService } from "ngx-toastr";
+
 import { ReportService } from "./report.service";
 import { AuthService } from "../../components/auth/auth.service";
 
@@ -21,13 +24,22 @@ export class ReportComponent implements OnInit {
     filter;
     currentUser = {};
 
+    alert: any = new Ngxalert();
+
     AuthService;
 
-    static parameters = [ActivatedRoute, Router, ReportService, AuthService];
+    static parameters = [
+        ActivatedRoute,
+        Router,
+        ToastrService,
+        ReportService,
+        AuthService,
+    ];
 
     constructor(
         private route: ActivatedRoute,
         private router: Router,
+        private toastr: ToastrService,
         private reportService: ReportService,
         private authService: AuthService
     ) {
@@ -104,8 +116,8 @@ export class ReportComponent implements OnInit {
 
             if (!this.filter) {
                 this.reports[n]["isApproved"] = true;
+                this.toastr.info("Onaylandı.");
 
-                alert("Onaylandı!");
                 return;
             }
 
@@ -115,15 +127,21 @@ export class ReportComponent implements OnInit {
     }
 
     ban(report) {
-        if (!confirm("Emin misiniz?")) {
-            return;
-        }
+        this.alert.create({
+            id: "ban-user",
+            title: "Kullanıcı Engellenecektir",
+            message: "Engellemek istediğinizden emin misiniz?",
+            customCssClass: "custom-alert",
+            confirm: () => {
+                this.alert.removeAlert("ban-user");
 
-        this.reportService
-            .ban(report)
-            .subscribe((reportedUser) =>
-                alert("Kullanıcı, engelleme listesine alındı.")
-            );
+                this.reportService
+                .ban(report)
+                .subscribe((reportedUser) =>
+                    this.toastr.info("Kullanıcı engelleme listesine alındı.")
+                );
+            },
+        });
     }
 
     reject(report) {
@@ -133,7 +151,7 @@ export class ReportComponent implements OnInit {
             if (!this.filter) {
                 this.reports[n]["isApproved"] = false;
 
-                alert("Onaylanmadı!");
+                this.toastr.info("Onaylanmadı.");
                 return;
             }
 
@@ -143,13 +161,19 @@ export class ReportComponent implements OnInit {
     }
 
     delete(report) {
-        if (!confirm("Emin misiniz?")) {
-            return;
-        }
+        this.alert.create({
+            id: "remove-user",
+            title: "Kullanıcı Silinecektir",
+            message: "Silmek istediğinizden emin misiniz?",
+            customCssClass: "custom-alert",
+            confirm: () => {
+                this.alert.removeAlert("remove-user");
 
-        this.reportService.remove(report).subscribe((reportedUser) => {
-            this.count--;
-            this.reports.splice(this.reports.indexOf(reportedUser), 1);
+                this.reportService.remove(report).subscribe((reportedUser) => {
+                    this.count--;
+                    this.reports.splice(this.reports.indexOf(reportedUser), 1);
+                });
+            },
         });
     }
 }

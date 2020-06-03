@@ -6,6 +6,8 @@ import Twitter from "twitter";
 
 import Report from "./report.model";
 import Spam from "../spam/spam.model";
+import Queue from "../spam/queue.model";
+
 import config from "../../config/environment";
 
 function handleError(res, statusCode) {
@@ -166,7 +168,7 @@ export function destroy(req, res) {
             fs.unlink(path.join(config.root, 'upload', report.picture), (err) => {
                 console.log(err);
             });
-            
+
             res.status(report ? 204 : 404).end();
         })
         .catch(handleError(res));
@@ -253,6 +255,24 @@ export function ban(req, res) {
             }).catch(handleError(res));
         })
         .catch(handleError(res));
+}
+
+export function blockAll(req, res) {
+    Spam.find({ isDeleted: { $ne: true } }).exec()
+        .then((spams) => {
+            spams.forEach(spam => {
+                rp({
+                    method: "POST",
+                    uri: `${config.blockUrl}/${config.blockRoute}`,
+                    body: {
+                        username: spam.username
+                    },
+                    json: true
+                })
+            });
+        });
+
+    res.status(204).send();
 }
 
 export function authCallback(req, res) {

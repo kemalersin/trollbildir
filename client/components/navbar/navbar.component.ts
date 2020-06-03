@@ -5,7 +5,7 @@ import { AuthService } from "../auth/auth.service";
 
 @Component({
     selector: "navbar",
-    template: require("./navbar.pug"),
+    template: require("./navbar.pug")
 })
 export class NavbarComponent {
     isCollapsed = true;

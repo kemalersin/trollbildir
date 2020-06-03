@@ -3,9 +3,10 @@ import { Location } from "@angular/common";
 import { finalize } from "rxjs/operators";
 import { Router, ActivatedRoute } from "@angular/router";
 
+import { ToastrService } from "ngx-toastr";
 import { Options, ImageResult } from "ngx-image2dataurl";
 
-import { maxFileSize } from "../../app.constants";
+import { errors, maxFileSize } from "../../app.constants";
 import { ReportService } from "../report.service";
 
 @Component({
@@ -29,12 +30,13 @@ export class AddReportComponent implements OnInit {
         allowedExtensions: ["JPG", "PNG"],
     };
 
-    static parameters = [Location, ActivatedRoute, Router, ReportService];
+    static parameters = [Location, ActivatedRoute, Router, ToastrService, ReportService];
 
     constructor(
         private location: Location,
         private route: ActivatedRoute,
         private router: Router,
+        private toastr: ToastrService,
         private reportService: ReportService
     ) {
         this.route = route;
@@ -66,7 +68,7 @@ export class AddReportComponent implements OnInit {
         );
 
         if (this.fileToUpload.size > maxFileSize) {
-            alert(`Dosya boyutu ${maxFileSize / 1024} KB'tan fazla olamaz!`);
+            this.toastr.error(`Dosya boyutu ${maxFileSize / 1024} KB'tan fazla olamaz!`);
 
             this.fileToUpload = null;
             this.fileInput.nativeElement.value = "";
@@ -75,7 +77,7 @@ export class AddReportComponent implements OnInit {
 
     addTroll() {
         if (!(this.username && this.notes)) {
-            return alert("Kullanıcı adı ya da bildirme nedeni boş olamaz!");
+            return this.toastr.error("Kullanıcı adı ya da bildirme nedeni boş olamaz!");
         }
 
         this.submitting = true;
@@ -99,7 +101,7 @@ export class AddReportComponent implements OnInit {
                             ]);
                         }
 
-                        return alert(
+                        return this.toastr.error(
                             `Bu kullanıcı ${
                                 res.status === 302
                                     ? "daha önce bildirilmiş"
@@ -108,7 +110,11 @@ export class AddReportComponent implements OnInit {
                         );
                     }
 
-                    alert(res.error);
+                    if (res.status === 404) {
+                        return this.toastr.error(errors.userNotFound);
+                    }
+
+                    this.toastr.error(res.error);
                 }
             );
     }

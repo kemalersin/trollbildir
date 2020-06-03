@@ -18,7 +18,7 @@ export class SpamService {
 
     count(): Observable<number> {
         return this.http.get('/api/spams/count') as Observable<number>;
-    }
+    } 
 
     query(username = '', index = 1): Observable<SpamType[]> {
         return this.http.get(`/api/spams/${username ? username : ""}?index=${index}`) as Observable<SpamType[]>;

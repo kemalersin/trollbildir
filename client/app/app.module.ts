@@ -1,5 +1,6 @@
 import { NgModule, ApplicationRef, LOCALE_ID } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { HttpClientModule } from "@angular/common/http";
 import {
     removeNgStyles,
@@ -13,6 +14,9 @@ import localeTR from "@angular/common/locales/tr";
 registerLocaleData(localeTR, "tr");
 
 import { RouterModule, Routes } from "@angular/router";
+
+import { ToastrModule } from "ngx-toastr";
+import { NgxDialogsModule } from "ngx-dialogs";
 
 import { AppComponent } from "./app.component";
 import { MainModule } from "./main/main.module";
@@ -40,6 +44,7 @@ const appRoutes: Routes = [
 @NgModule({
     imports: [
         BrowserModule,
+        BrowserAnimationsModule,
         HttpClientModule,
         JwtModule.forRoot({
             config: {
@@ -56,6 +61,13 @@ const appRoutes: Routes = [
         SpamModule,
         ReportModule,
         AddReportModule,
+        NgxDialogsModule,
+        ToastrModule.forRoot({
+            timeOut: 2500,
+            progressBar: true,
+            preventDuplicates: true,
+            positionClass: "toast-top-center",
+        }),
     ],
     declarations: [AppComponent],
     providers: [{ provide: LOCALE_ID, useValue: "tr" }],

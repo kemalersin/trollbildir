@@ -50,7 +50,7 @@ export class MainComponent implements OnInit, OnDestroy {
                     if (this.redirect) {
                         window.location.href = redirectUrl;
                     }
-                }, 1000 * 60);
+                }, 1000 * 60 * 2);
             }
         });
     }

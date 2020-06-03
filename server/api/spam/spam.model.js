@@ -5,6 +5,18 @@ mongoose.Promise = require('bluebird');
 
 var SpamSchema = new Schema({
     username: String,
+    isDeleted: {
+        type: Boolean,
+        default: false
+    },
+    isNotFound: {
+        type: Boolean,
+        default: false
+    },
+    isSuspended: {
+        type: Boolean,
+        default: false
+    },    
     profile: {}
 }, { timestamps: true });
 
