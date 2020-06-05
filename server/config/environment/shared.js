@@ -19,6 +19,7 @@ export const errors = {
 export default {
     env,
     port,
+    errors,
     userRoles,
     dataLimit,
     maxFileSize,

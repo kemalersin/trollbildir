@@ -41,6 +41,7 @@
     "multer": "^1.4.2",
     "ngx-cookie-service": "^2.4.0",
     "ngx-dialogs": "^1.0.2",
+    "ngx-toastr": "^10.1.0",
     "ngx-image2dataurl": "^8.0.0",
     "ngx-infinite-scroll": "^9.0.0",
     "passport": "~0.4.0",

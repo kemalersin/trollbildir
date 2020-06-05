@@ -5,6 +5,7 @@ mongoose.Promise = require('bluebird');
 
 var LogSchema = new Schema({
     username: String,
+    queueId: Schema.Types.ObjectId,
     sessionDate: Date,
     error: {}
 }, {

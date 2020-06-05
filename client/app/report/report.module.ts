@@ -2,6 +2,7 @@ import { NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 import { RouterModule, Routes } from "@angular/router";
 
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { InfiniteScrollModule } from "ngx-infinite-scroll";
 import { CrystalLightboxModule } from "@crystalui/angular-lightbox";
 
@@ -31,6 +32,7 @@ const ReportRoutes: Routes = [
     imports: [
         BrowserModule,
         RouterModule.forChild(ReportRoutes),
+        TooltipModule.forRoot(),
         InfiniteScrollModule,
         CrystalLightboxModule,
     ],

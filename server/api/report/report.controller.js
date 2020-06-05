@@ -120,7 +120,7 @@ export function create(req, res) {
                 })
                 .catch(handleError(res));
         })
-        .catch((error) => res.status(404).send("Kullanıcı bulunamadı!"));
+        .catch((error) => res.status(404).send(config.errors.userNotFound));
 }
 
 export function show(req, res, next) {

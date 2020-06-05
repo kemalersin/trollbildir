@@ -110,10 +110,6 @@ export class AddReportComponent implements OnInit {
                         );
                     }
 
-                    if (res.status === 404) {
-                        return this.toastr.error(errors.userNotFound);
-                    }
-
                     this.toastr.error(res.error);
                 }
             );

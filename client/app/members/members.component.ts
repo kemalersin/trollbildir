@@ -82,10 +82,6 @@ export class MembersComponent implements OnInit {
                         return this.router.navigate(["/bildirilenler", member]);
                     }
 
-                    if (res.status === 404) {
-                        return this.toastr.error(errors.userNotFound);
-                    }
-
                     this.toastr.error(res.error);
                 }
             );

@@ -1,6 +1,5 @@
 /*eslint no-invalid-this:0*/
 import mongoose, { Schema } from 'mongoose';
-import { registerEvents } from './user.events';
 
 mongoose.Promise = require('bluebird');
 
@@ -51,5 +50,4 @@ UserSchema
         };
     });
 
-registerEvents(UserSchema);
 export default mongoose.model('User', UserSchema);

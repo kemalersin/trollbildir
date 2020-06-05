@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 import { AuthGuard } from '../../components/auth/auth-guard.service';
@@ -25,6 +26,7 @@ const SpamRoutes: Routes = [{
         BrowserModule,
         FormsModule,
         RouterModule.forChild(SpamRoutes),
+        TooltipModule.forRoot(),        
         InfiniteScrollModule
     ],
     declarations: [

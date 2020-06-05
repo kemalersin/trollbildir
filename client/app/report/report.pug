@@ -64,22 +64,22 @@
           p.commands
             img(*ngIf='report.picture',
               src='/assets/images/panorama.png',
-              lightbox, title="Görseli görüntüle",
+              lightbox, tooltip="Görseli görüntüle",
               [fullImage]='{path: "/api/images/" + report.picture}',
               closeButtonText='Kapat')         
             span(*ngIf='currentUser.role!="user" && report.isApproved==null && (!filter || filter=="onay-bekleyenler")', )
               | &nbsp;&nbsp;
-              a.approve((click)='approve(report)', title="Onayla")
+              a.approve((click)='approve(report)', tooltip="Onayla")
                 span.fa.fa-check
               | &nbsp;&nbsp;
-              a.ban((click)='ban(report)', title="Engelle")
+              a.ban((click)='ban(report)', tooltip="Engelle")
                 span.fa.fa-ban  
               | &nbsp;&nbsp;             
-              a.not-approve((click)='reject(report)', title="Onaylama")
+              a.not-approve((click)='reject(report)', tooltip="Onaylama")
                 span.fa.fa-times 
             span(*ngIf='filter=="onaylananlar" && currentUser.role!="user" && report.isApproved') 
               | &nbsp;&nbsp;
-              a.ban((click)='ban(report)', title="Engelle")
+              a.ban((click)='ban(report)', tooltip="Engelle")
                 span.fa.fa-ban                               
             span(*ngIf='filter=="onay-bekleyenler" && currentUser.role=="user"')
               | &nbsp;&nbsp;

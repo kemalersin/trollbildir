@@ -4,6 +4,7 @@ import Twitter from "twitter";
 import Spam from "./spam.model";
 import Log from "../log/log.model";
 import Stat from "../stat/stat.model";
+import Flag from "./flag.model";
 import Queue from "./queue.model";
 import User from "../user/user.model";
 import config from "../../config/environment";
@@ -157,7 +158,7 @@ export function create(req, res) {
                 })
                 .catch(handleError(res));
         })
-        .catch((error) => res.status(404).send("Kullanıcı bulunamadı!"));
+        .catch((error) => res.status(404).send(config.errors.userNotFound));
 }
 
 export function show(req, res, next) {
@@ -207,7 +208,7 @@ export function queue(req, res) {
         .catch(handleError(res));
 }
 
-export function spam(req, res) {
+export async function spam(req, res) {
     const sessionDate = new Date();
 
     var failedSpams = [];
@@ -215,7 +216,13 @@ export function spam(req, res) {
     var success = 0;
     var failed = 0;
 
-    Queue.findOne({ isDeleted: { $ne: true }}, "id")
+    const status = await Flag.findOne({ "spaming.started": true }).exec();
+
+    if (status && status["spaming"]) {
+        return res.status(304).end();
+    }
+
+    Queue.findOne({ isDeleted: { $ne: true } }, "id")
         .sort({ _id: -1 })
         .then((queue) => {
             if (!queue) {
@@ -234,6 +241,14 @@ export function spam(req, res) {
                 .sort({ lastQueueId: 1 })
                 .then((users) => {
                     let outerLimit = 0;
+
+                    Flag.updateOne(
+                        { "spaming.started": false },
+                        {
+                            "spaming.started": true,
+                            "spaming.startDate": new Date()
+                        }, { upsert: true }
+                    ).exec();
 
                     async.eachSeries(users, (user, cbOuter) => {
                         let twitter = getTwitter(user);
@@ -271,6 +286,12 @@ export function spam(req, res) {
                                         queue.isSuspended = false;
                                         queue.save();
 
+                                        Spam.updateOne({
+                                            username: queue.username
+                                        }, {
+                                            profile: spamed
+                                        }).exec();
+
                                         user.lastQueueId = queue.id;
 
                                         user.save().then(() => {
@@ -295,6 +316,7 @@ export function spam(req, res) {
                                             if (errCode) {
                                                 Log.create({
                                                     username: user.username,
+                                                    queueId: queue._id,
                                                     error: err[0],
                                                     sessionDate,
                                                 });
@@ -309,15 +331,25 @@ export function spam(req, res) {
                                                         queue.isNotFound = true;
 
                                                     queue.save();
+
+                                                    Spam.updateOne({
+                                                        username: queue.username
+                                                    }, {
+                                                        profile: spamed,
+                                                        isSuspended: queue.isSuspended,
+                                                        isNotFound: queue.isNotFound
+                                                    }).exec();
+
                                                     failedSpams.push(queue.username);
                                                 }
                                                 else {
                                                     if (
+                                                        errCode == 32 ||
                                                         errCode == 64 ||
                                                         errCode == 89 ||
                                                         errCode == 326
                                                     ) {
-                                                        if (errCode == 64) {
+                                                        if (errCode == 32 || errCode == 89) {
                                                             user.isSuspended = true;
                                                         }
                                                         else {
@@ -351,6 +383,14 @@ export function spam(req, res) {
                         });
 
                         stat.save();
+
+                        Flag.updateOne(
+                            { "spaming.started": true },
+                            {
+                                "spaming.started": false,
+                                "spaming.finishDate": new Date()
+                            }
+                        ).exec();
                     })
                 });
         });

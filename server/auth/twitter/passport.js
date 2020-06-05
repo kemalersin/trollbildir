@@ -45,24 +45,26 @@ export function setup(User, config) {
                         return done(null, user);
                     }
 
-                    Queue.findOne({}, "id")
+                    user = new User({
+                        name: profile.displayName,
+                        username: profile.username,
+                        email: profile._json.email,
+                        profile: profile._json,
+                        accessToken: token,
+                        accessTokenSecret: tokenSecret,
+                        //lastQueueId: queue ? queue.id : null,
+                        role
+                    });
+
+                    user.save()
+                        .then(savedUser => done(null, savedUser))
+                        .catch(err => done(err));                    
+
+                    /*Queue.findOne({}, "id")
                         .sort({ _id: -1 })
                         .then((queue) => {
-                            user = new User({
-                                name: profile.displayName,
-                                username: profile.username,
-                                email: profile._json.email,
-                                profile: profile._json,
-                                accessToken: token,
-                                accessTokenSecret: tokenSecret,
-                                lastQueueId: queue ? queue.id : null,
-                                role
-                            });
 
-                            user.save()
-                                .then(savedUser => done(null, savedUser))
-                                .catch(err => done(err));
-                        });
+                        });*/
                 })
                 .catch(err => done(err));
         }));
