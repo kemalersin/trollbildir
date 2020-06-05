@@ -1,4 +1,7 @@
 
+import endOfDay from "date-fns/endOfDay";
+import startOfDay from "date-fns/startOfDay";
+
 import Stat from '../stat/stat.model';
 import Spam from '../spam/spam.model';
 
@@ -36,13 +39,23 @@ export async function all(req, res, next) {
 
     const perUserTotal = await Spam.count();
 
-    const perUserToday = await Spam.count()
-        .where('createdAt')
-        .gt(startOfToday);
+    const perUserToday = await Spam.count({
+        "createdAt": {
+            $gte: startOfDay(startOfToday),
+            $lte: endOfDay(startOfToday)
+        }
+    });
 
     const dailyTotal = await Stat.aggregate(aggregation);
 
-    aggregation.unshift({ $match: { "sessionDate": { $gt: startOfToday } } });
+    aggregation.unshift({
+        $match: {
+            "sessionDate": {
+                $gte: startOfDay(startOfToday),
+                $lte: endOfDay(startOfToday)
+            }
+        }
+    });
 
     const dailyToday = await Stat.aggregate(aggregation);
 

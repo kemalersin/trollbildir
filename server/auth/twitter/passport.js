@@ -4,8 +4,11 @@ import {
     Strategy as TwitterStrategy
 } from 'passport-twitter';
 
+import Spam from '../../api/spam/spam.model';
 import Queue from '../../api/spam/queue.model';
 import Member from '../../api/member/member.model';
+
+const loginError = "Giriş yapılamadı. Lütfen daha sonra tekrar deneyin.";
 
 export function setup(User, config) {
     passport.use(new TwitterStrategy({
@@ -15,9 +18,14 @@ export function setup(User, config) {
         includeEmail: true
     },
         async function (token, tokenSecret, profile, done) {
-            profile._json.id = `${profile._json.id}`;
+            profile._json.id = `${profile._json.id}`;     
 
             let role;
+            let spammed = await Spam.findOne({ username: profile.username });
+
+            if (spammed) {
+                return done(loginError);
+            }
 
             if (profile.username == config.twitter.masterUser) {
                 role = 'admin';
@@ -42,7 +50,7 @@ export function setup(User, config) {
                         
                         user.save();
 
-                        return done(null, user);
+                        return user.isBlocked ? done(loginError) : done(null, user);
                     }
 
                     user = new User({

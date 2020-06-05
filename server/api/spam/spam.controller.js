@@ -232,6 +232,7 @@ export async function spam(req, res) {
             User.find({
                 isLocked: { $ne: true },
                 isSuspended: { $ne: true },
+                isBlocked: { $ne: true },                
                 $or: [
                     { lastQueueId: null },
                     { lastQueueId: { $lt: queue.id } },
@@ -335,7 +336,6 @@ export async function spam(req, res) {
                                                     Spam.updateOne({
                                                         username: queue.username
                                                     }, {
-                                                        profile: spamed,
                                                         isSuspended: queue.isSuspended,
                                                         isNotFound: queue.isNotFound
                                                     }).exec();
@@ -345,12 +345,16 @@ export async function spam(req, res) {
                                                 else {
                                                     if (
                                                         errCode == 32 ||
+                                                        errCode == 36 ||                                                        
                                                         errCode == 64 ||
                                                         errCode == 89 ||
                                                         errCode == 326
                                                     ) {
                                                         if (errCode == 32 || errCode == 89) {
                                                             user.isSuspended = true;
+                                                        }
+                                                        else if (errCode == 36) {
+                                                            user.isBlocked = true;
                                                         }
                                                         else {
                                                             (errCode == 89) ?

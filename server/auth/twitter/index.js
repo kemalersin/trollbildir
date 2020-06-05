@@ -6,11 +6,11 @@ var router = express.Router();
 
 router
     .get('/', passport.authenticate('twitter', {
-        failureRedirect: '/signup',
+        failureRedirect: '/',
         session: false
     }))
     .get('/callback', passport.authenticate('twitter', {
-        failureRedirect: '/signup',
+        failureRedirect: '/',
         session: false
     }), setTokenCookie);
 
