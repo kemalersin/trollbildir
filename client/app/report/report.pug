@@ -55,7 +55,7 @@
           h4.text-center
             a([attr.href]='"https://www.twitter.com/" + report.username', target='_blank') {{report.username}}
           blockquote
-            p {{report.notes}}
+            p([innerHTML]='report.notes | linkify')
           p.info.small
             span(*ngIf='currentUser.role!="user"')
               a([attr.href]='"https://www.twitter.com/" + report.reportedBy', target='_blank') {{report.reportedBy}}

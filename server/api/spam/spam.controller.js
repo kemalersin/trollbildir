@@ -1,6 +1,8 @@
 import async from "async";
 import Twitter from "twitter";
 
+import differenceInMinutes from "date-fns/differenceInMinutes";
+
 import Spam from "./spam.model";
 import Log from "../log/log.model";
 import Stat from "../stat/stat.model";
@@ -208,6 +210,29 @@ export function queue(req, res) {
         .catch(handleError(res));
 }
 
+export function resetTask(req, res) {
+    const now = new Date();
+
+    Flag.findOne({ "spaming.started": true })
+        .exec()
+        .then((task) => {
+            if (!task) {
+                return res.status(404).end();
+            }
+
+            if (differenceInMinutes(now, task.spaming.startDate) >= 44) {
+                task.spaming.started = false;
+                task.spaming.finishDate = now;
+
+                task.save();
+
+                return res.status(204).end();
+            }
+
+            return res.status(304).end();
+        });
+}
+
 export async function spam(req, res) {
     const sessionDate = new Date();
 
@@ -232,7 +257,7 @@ export async function spam(req, res) {
             User.find({
                 isLocked: { $ne: true },
                 isSuspended: { $ne: true },
-                isBlocked: { $ne: true },                
+                isBlocked: { $ne: true },
                 $or: [
                     { lastQueueId: null },
                     { lastQueueId: { $lt: queue.id } },
@@ -247,7 +272,8 @@ export async function spam(req, res) {
                         { "spaming.started": false },
                         {
                             "spaming.started": true,
-                            "spaming.startDate": new Date()
+                            "spaming.startDate": new Date(),
+                            "spaming.finishDate": null
                         }, { upsert: true }
                     ).exec();
 
@@ -279,6 +305,7 @@ export async function spam(req, res) {
                                         if (!spamed["screen_name"]) {
                                             failed++;
                                             userSpamCounter++;
+
                                             return cbInner();
                                         }
 
@@ -345,7 +372,7 @@ export async function spam(req, res) {
                                                 else {
                                                     if (
                                                         errCode == 32 ||
-                                                        errCode == 36 ||                                                        
+                                                        errCode == 36 ||
                                                         errCode == 64 ||
                                                         errCode == 89 ||
                                                         errCode == 326
