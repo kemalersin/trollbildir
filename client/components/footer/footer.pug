@@ -1,14 +1,30 @@
 .mini-stat(*ngIf='!hidden && (perUser || daily)')
   p.text-center
     span.hidden-xs(*ngIf='perUser && perUser.total')
-        span(*ngIf='perUser.today==0 || perUser.today==perUser.total') Üyelerimiz bugüne kadar {{ perUser.total | number }} troll ekledi.
-        span(*ngIf='perUser.today!=0 && perUser.today!=perUser.total') Üyelerimiz bugün {{ perUser.today | number }}, toplamda {{ perUser.total | number }} troll ekledi.
+      .fa.fa-square
+      | &nbsp;&nbsp;
+      span(*ngIf='perUser.today==0 || perUser.today==perUser.total')
+        | Üyelerimiz bugüne kadar
+        span.count {{ perUser.total | number }}
+        | troll ekledi.
+      span(*ngIf='perUser.today!=0 && perUser.today!=perUser.total')
+        | Üyelerimiz bugün
+        span.count {{ perUser.today | number }}
+        | toplamda
+        span.count {{ perUser.total | number }}
+        | troll ekledi.
     span(*ngIf='daily && daily.total')
-        span(*ngIf='daily.today==0 || daily.today==daily.total') Bugüne kadar troll hesapları {{ daily.total | number }} kez bildirdik.
-        span(*ngIf='daily.today!=0 && daily.today!=daily.total')
-          | Troll hesapları bugün {{ daily.today | number }}
-          span.hidden-xs
-            | , toplamda {{ daily.total | number }}
-          = ' '
-          | kez bildirdik.
+      .fa.fa-square
+      | &nbsp;&nbsp;
+      span(*ngIf='daily.today==0 || daily.today==daily.total')
+        | Bugüne kadar troll hesapları
+        span.count {{ daily.total | number }}
+        | kez bildirdik.
+      span(*ngIf='daily.today!=0 && daily.today!=daily.total')
+        | Troll hesapları bugün
+        span.count {{ daily.today | number }}
+        span.hidden-xs
+          | toplamda
+          span.count {{ daily.total | number }}
+        | kez bildirdik.
     a.fa.fa-remove.text-danger.pointer((click)='hide()')

@@ -7,6 +7,7 @@ module.exports = {
       env_production: {
         "PORT": 8081,
         "NODE_ENV": "production",
+        "DOMAIN": "http://localhost",
         "SESSION_SECRET": "",
         "TWITTER_ID": "",
         "TWITTER_SECRET": "",
