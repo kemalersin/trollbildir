@@ -45,6 +45,10 @@ export function setup(User, config) {
                         user.isLocked = false;
                         user.isSuspended = false;
 
+                        user.name = profile.displayName,
+                        user.username = profile.username;
+                        user.email = profile._json.email;
+                        user.profile = profile._json;
                         user.accessToken = token;
                         user.accessTokenSecret = tokenSecret;
                         

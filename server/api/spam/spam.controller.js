@@ -317,6 +317,7 @@ export async function spam(req, res) {
                                         Spam.updateOne({
                                             username: queue.username
                                         }, {
+                                            username: spamed.screen_name,
                                             profile: spamed
                                         }).exec();
 
