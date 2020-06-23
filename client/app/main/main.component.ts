@@ -10,7 +10,6 @@ import { AuthService } from "../../components/auth/auth.service";
     styles: [require("./main.scss")],
 })
 export class MainComponent implements OnInit, OnDestroy {
-    isUser;
     isTwitterUser;
 
     isLoaded;
