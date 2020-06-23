@@ -1,0 +1,32 @@
+.container.settings {
+    margin-top: 40px;
+
+    .title,
+    hr {
+        margin-top: 10px;
+    }
+
+    hr {
+        margin-bottom: 30px;
+    }
+
+    a.nav-link.active {
+        border-radius: 4px;
+        background-color: #e95420;
+        color: #fff;
+    }
+
+    .panel.form {
+        border-top-width: 1px;
+
+        .panel-body {
+            padding: 58px;
+
+            form {
+                input.form-control {
+                    min-width: 235px;
+                }
+            }
+        }
+    }
+}

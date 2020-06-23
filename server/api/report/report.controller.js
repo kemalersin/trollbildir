@@ -10,12 +10,9 @@ import Queue from "../spam/queue.model";
 
 import config from "../../config/environment";
 
-function handleError(res, statusCode) {
-    statusCode = statusCode || 500;
-    return function (err) {
-        return res.status(statusCode).send(err);
-    };
-}
+import {
+    handleError
+} from '../../helpers';
 
 function getTwitter(user) {
     return new Twitter({
@@ -33,7 +30,12 @@ function isMember(req) {
 export function count(req, res, next) {
     const filter = req.query.filter;
 
-    var query = isMember(req) ? {} : { reportedBy: req.user.username };
+    var query = isMember(req) ? {} : {
+        $or: [
+            { reporter: req.user._id },
+            { reportedBy: req.user.username }
+        ]
+    };
 
     if (filter == "onaylananlar") {
         query.isApproved = true;
@@ -59,11 +61,17 @@ export function index(req, res) {
     return Report.find(
         isMember(req) ?
             {} :
-            { reportedBy: req.user.username },
+            {
+                $or: [
+                    { reporter: req.user._id },
+                    { reportedBy: req.user.username }
+                ]
+            },
         "-salt -password")
         .sort({ _id: -1 })
         .skip(--index * config.dataLimit)
         .limit(config.dataLimit)
+        .populate("reporter", ["username", "provider"])
         .exec()
         .then((reports) => {
             res.status(200).json(reports);
@@ -79,7 +87,7 @@ export function create(req, res) {
     twitter
         .get("users/show", { screen_name: username })
         .then((profile) => {
-            if (profile.id == req.user.profile.id) {
+            if (req.user.profile && profile.id == req.user.profile.id) {
                 return res
                     .status(500)
                     .send("Neden kendinizi bildiresiniz ki?");
@@ -89,7 +97,10 @@ export function create(req, res) {
                 .exec()
                 .then((report) => {
                     if (report) {
-                        return (report.reportedBy == req.user.username) ?
+                        return (
+                            report.reporter == req.user._id ||
+                            report.reportedBy == req.user.username
+                        ) ?
                             res.status(302).json(report) :
                             res.status(302).end();
                     }
@@ -106,7 +117,7 @@ export function create(req, res) {
                                 profile: profile,
                                 notes: notes,
                                 picture: req.file ? req.file.filename : null,
-                                reportedBy: req.user.username
+                                reporter: req.user._id
                             });
 
                             return newReport
@@ -127,7 +138,12 @@ export function show(req, res, next) {
     const filter = req.params.filter;
 
     var index = +req.query.index || 1;
-    var query = isMember(req) ? {} : { reportedBy: req.user.username };
+    var query = isMember(req) ? {} : {
+        $or: [
+            { reporter: req.user._id },
+            { reportedBy: req.user.username }
+        ]
+    };
 
     if (filter == "onaylananlar") {
         query.isApproved = true;
@@ -146,6 +162,7 @@ export function show(req, res, next) {
         .sort({ _id: -1 })
         .skip(--index * config.dataLimit)
         .limit(config.dataLimit)
+        .populate("reporter", ["username", "provider"])
         .exec()
         .then((report) => {
             if (!report) {
@@ -160,14 +177,19 @@ export function show(req, res, next) {
 export function destroy(req, res) {
     Report.findOneAndRemove({
         _id: req.params.id,
-        reportedBy: req.user.username,
-        isApproved: { $eq: null }
+        isApproved: { $eq: null },
+        $or: [
+            { reporter: req.user._id },
+            { reportedBy: req.user.username }
+        ]
     })
         .exec()
         .then((report) => {
-            fs.unlink(path.join(config.root, 'upload', report.picture), (err) => {
-                console.log(err);
-            });
+            if (report.picture) {
+                fs.unlink(path.join(config.root, 'upload', report.picture), (err) => {
+                    console.log(err);
+                });
+            }
 
             res.status(report ? 204 : 404).end();
         })

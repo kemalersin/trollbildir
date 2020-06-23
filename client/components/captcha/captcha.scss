@@ -1,0 +1,30 @@
+.captcha {
+    margin-top: 2px;
+    margin-bottom: 0;
+
+    img {
+      margin-top: -8px;
+    }
+
+    a.refresh {
+      cursor: pointer;
+    }
+
+    .fa.fa-refresh {
+      font-size: 22px;
+    }
+
+    input {
+      width: 55px;
+      font-size: 18px;
+      max-height: 35px;
+      margin-left: 10px;
+      margin-right: 14px;
+      text-align: center;
+      display: inline-block;
+
+      &:focus::placeholder {
+        color: transparent;
+      }
+    }
+  }

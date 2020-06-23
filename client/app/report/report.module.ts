@@ -7,7 +7,8 @@ import { InfiniteScrollModule } from "ngx-infinite-scroll";
 import { CrystalLightboxModule } from "@crystalui/angular-lightbox";
 import { NgxLinkifyjsModule } from 'ngx-linkifyjs';
 
-import { AuthGuard } from "../../components/auth/auth-guard.service";
+import { TwitterGuard } from "../../components/auth/twitter-guard.service";
+
 import { ReportService } from "./report.service";
 import { ReportComponent } from "./report.component";
 
@@ -15,17 +16,17 @@ const ReportRoutes: Routes = [
     {
         path: "bildirimlerim/:filter",
         component: ReportComponent,
-        canActivate: [AuthGuard],
+        canActivate: [TwitterGuard],
     },
     {
         path: "bildirimlerim",
         component: ReportComponent,
-        canActivate: [AuthGuard],
+        canActivate: [TwitterGuard],
     },
     {
         path: "oneriler",
         component: ReportComponent,
-        canActivate: [AuthGuard],
+        canActivate: [TwitterGuard],
     }
 ];
 

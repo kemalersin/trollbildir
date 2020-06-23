@@ -1,8 +1,8 @@
 h3.centered(*ngIf="isLoaded")
   p.text-center
-    img(src='assets/images/logo.jpg', width='200', height='200')
+    img(src='assets/images/logo.png', width='200', height='200')
   br
-  p.text-center(*ngIf='isLoggedIn')
+  p.text-center.animate__animated.animate__zoomIn(*ngIf='isLoggedIn')
     | &nbsp; Katıldığınız için teşekkürler!
   p.small.text-center(*ngIf='isUser')
     | 2 dakika içinde Twitter adresimize yönlendirileceksiniz...
@@ -10,9 +10,13 @@ h3.centered(*ngIf="isLoaded")
   p.small.text-center(*ngIf='isUser')
     a(routerLink='/bildirimlerim') Troll bildirmek için tıklayın.
   p.text-center(*ngIf='!isLoggedIn')
-    a.btn.btn-primary.btn-lg.twitter(href='/auth/twitter')
+    a.btn.btn-primary.login(href='/auth/twitter')
       i.fa.fa-twitter
       | &nbsp; Aramıza Katıl
+    | &nbsp;&nbsp;
+    a.btn.login.outline(routerLink='/giris')
+      i.fa.fa-envelope-o
+      | &nbsp; E-Posta ile Giriş
     br
   br
   p.small.text-center

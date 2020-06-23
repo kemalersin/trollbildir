@@ -16,7 +16,7 @@
       p.text-center
         span(*ngIf='count===-1') Kayıtlar listeleniyor...
         span(*ngIf='count===0') Kayıt bulunamadı!
-        span(*ngIf='count>0') Toplam {{count}} eklenmiş hesap bulundu:
+        span(*ngIf='count>0') Toplam {{ count | number }} eklenmiş hesap bulundu:
       br
   .row
     .col-md-3(*ngFor='let member of members')

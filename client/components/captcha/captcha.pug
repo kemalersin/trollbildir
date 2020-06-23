@@ -1,0 +1,13 @@
+h3.captcha
+    img([src]='captchaUrl', width='75', height='45')
+    span =
+    input.form-control(type='text',
+        name='captcha',
+        placeholder='?',
+        [(ngModel)]='text',
+        (ngModelChange)='change()',
+        maxlength='2',
+        required
+    )
+    a.refresh((click)='refreshCaptcha()')
+        i.fa.fa-refresh.text-success

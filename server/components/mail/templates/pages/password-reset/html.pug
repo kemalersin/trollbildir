@@ -1,0 +1,31 @@
+extends ../../layouts/default.pug
+
+block preheader
+  | TrollBildir parolanızı sıfırlayın.
+
+block content
+  table(data-module='module-2', width='100%', cellpadding='0', cellspacing='0')
+    tr
+      td(data-bgcolor='bg-module', bgcolor='#eaeced')
+        table.flexible(width='600', align='center', style='margin:0 auto;', cellpadding='0', cellspacing='0')
+          tr
+            td.img-flex
+              img(src='https://sesiniduyur.isimsizlerhareketi.org/assets/images/banner-01.jpg', style='vertical-align:top;', width='600', height='249', alt='')
+          tr
+            td.holder(data-bgcolor='bg-block', style='padding:65px 60px 50px;', bgcolor='#f9f9f9')
+              table(width='100%', cellpadding='0', cellspacing='0')
+                tr
+                  td.title(data-color='title', data-size='size title', data-min='20', data-max='40', data-link-color='link title color', data-link-style='text-decoration:none; color:#292c34;', align='center', style='font:30px/33px Arial, Helvetica, sans-serif; color:#292c34; padding:0 0 24px;')
+                    | Parola Sıfırlama
+                tr
+                  td(data-color='text', data-size='size text', data-min='10', data-max='26', data-link-color='link text color', data-link-style='font-weight:bold; text-decoration:underline; color:#40aceb;', align='center', style='font:16px/29px Arial, Helvetica, sans-serif; color:#888; padding:0 0 21px;')
+                    | Merhaba #{name}, aşağıdaki bağlantıya tıklayarak parola sıfırlama işlemini tamamlayabilirsiniz. Parolanızı sıfırlamak istemiyorsanız bu e-postayı dikkate almayınız.
+                tr
+                  td(style='padding:0 0 20px;')
+                    table(width='134', align='center', style='margin:0 auto;', cellpadding='0', cellspacing='0')
+                      tr
+                        td.btn(data-bgcolor='bg-button', data-size='size button', data-min='10', data-max='16', align='center', style='font:12px/14px Arial, Helvetica, sans-serif; color:#f8f9fb; text-transform:uppercase; mso-padding-alt:12px 10px 10px; border-radius:2px;', bgcolor='#f5ba1c')
+                          a(target='_blank', style='text-decoration:none; color:#f8f9fb; display:block; padding:12px 10px 10px;', href=url + '/' + code) Parolamı Sıfırla
+          tr
+            td(height='28')  
+

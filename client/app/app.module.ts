@@ -20,7 +20,15 @@ import { NgxDialogsModule } from "ngx-dialogs";
 
 import { AppComponent } from "./app.component";
 import { MainModule } from "./main/main.module";
+import { LoginModule } from "./login/login.module";
+import { RegisterModule } from "./register/register.module";
+import { SettingsModule } from "./settings/settings.module";
+import { RandomModule } from "./random/random.module";
+import { ListModule } from "./list/list.module";
+import { PasswordResetModule } from "./password/password.reset/password.reset.module";
+
 import { DirectivesModule } from "../components/directives.module";
+
 import { JwtModule } from "@auth0/angular-jwt";
 import { MembersModule } from "./members/members.module";
 import { UsersModule } from "./users/users.module";
@@ -55,12 +63,18 @@ const appRoutes: Routes = [
             enableTracing: process.env.NODE_ENV === "development",
         }),
         MainModule,
+        LoginModule,
+        RegisterModule, 
+        SettingsModule,   
+        PasswordResetModule,         
         DirectivesModule,
         MembersModule,
         UsersModule,
         SpamModule,
         ReportModule,
         AddReportModule,
+        RandomModule,
+        ListModule,        
         NgxDialogsModule,
         ToastrModule.forRoot({
             timeOut: 2500,

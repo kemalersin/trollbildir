@@ -9,8 +9,10 @@ import { CookieService } from "ngx-cookie-service";
 class User {
     _id = "";
     name = "";
+    username = "";
     email = "";
     role = "";
+    provider = "";
 }
 
 @Injectable()
@@ -63,11 +65,12 @@ export class AuthService {
         this.currentUserChanged.emit(user);
     }
 
-    login({ email, password }, callback) {
+    login(username, password, captcha) {
         return this.http
             .post("/auth/local", {
-                email,
+                username,
                 password,
+                captcha,
             })
             .toPromise()
             .then((res: { token: string }) => {
@@ -77,25 +80,27 @@ export class AuthService {
             .then((user: User) => {
                 this.currentUser = user;
                 localStorage.setItem("user", JSON.stringify(user));
-                safeCb(callback)(null, user);
                 return user;
             })
             .catch((err) => {
                 this.logout();
-                safeCb(callback)(err);
                 return Promise.reject(err);
             });
     }
 
-    logout() {
+    logout(force = false) {
+        if (force) {
+            this.userService.logout().subscribe();
+        }
+
         localStorage.removeItem("user");
         localStorage.removeItem("id_token");
         this.currentUser = new User();
         return Promise.resolve();
     }
 
-    createUser(user, callback) {
-        return this.UserService.create(user)
+    createUser(user, captcha, callback) {
+        return this.UserService.create(user, captcha)
             .toPromise()
             .then((data) => {
                 localStorage.setItem("id_token", data.token);
@@ -106,10 +111,25 @@ export class AuthService {
                 return safeCb(callback)(null, _user);
             })
             .catch((err) => {
-                this.logout();
                 safeCb(callback)(err);
                 return Promise.reject(err);
             });
+    }
+
+    changeUsername(username, name, callback) {
+        return this.UserService.changeUsername(
+            { id: this.currentUser._id },
+            username,
+            name
+        )
+            .toPromise()
+            .then(() => {
+                this.currentUser.name = name;
+                this.currentUser.username = username;
+
+                safeCb(callback)(null);
+            })
+            .catch((err) => safeCb(callback)(err));
     }
 
     changePassword(oldPassword, newPassword, callback) {
@@ -132,19 +152,25 @@ export class AuthService {
         return this.currentUser;
     }
 
-    isLoggedIn(callback?) {
+    isLoggedIn(callback?, isTwitterUser?) {
         let is = !!this.currentUser._id;
 
         if (is || !localStorage.getItem("id_token")) {
+            if (isTwitterUser && this.currentUser) {
+                is = this.currentUser.provider == "twitter";
+            }
+
             safeCb(callback)(is);
             return Promise.resolve(is);
         } else {
             return this.UserService.get()
                 .toPromise()
                 .then((user: User) => {
-                    this.currentUser = user;
-                    safeCb(callback)(!!this.currentUser._id)
-                    return !!this.currentUser._id;
+                    const result =
+                        !!this.currentUser._id && (!isTwitterUser || user.provider == "twitter");
+
+                    safeCb(callback)(result);
+                    return result;
                 })
                 .catch((err) => {
                     localStorage.removeItem("id_token");
@@ -159,15 +185,18 @@ export class AuthService {
         return !!this.currentUser._id;
     }
 
-    isUser(callback?) {
+    isTwitterUser(callback?) {
         return this.getCurrentUser().then((user) => {
-            var is = user.role && user.role === "user";
+            var is =
+                user.role &&
+                user.role === "user" &&
+                user.provider === "twitter";
             safeCb(callback)(is);
             return is;
         });
     }
 
-    isUserSync() {
+    isTwitterUserSync() {
         return this.currentUser.role === "user";
     }
 

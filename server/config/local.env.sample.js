@@ -1,8 +1,3 @@
-// Use local.env.js for environment variables that will be set when the server starts locally.
-// Use for your api keys, secrets, etc. This file should not be tracked by git.
-//
-// You will need to set these on the server you deploy to.
-
 module.exports = {
     DOMAIN: 'http://localhost:9000',
     BLOCK_URL: 'http://localhost:8081/api/blocks/',
@@ -12,7 +7,12 @@ module.exports = {
     TWITTER_SECRET: 'secret',
     TWITTER_MASTER: '',
 
-    // Control debug level for modules using visionmedia/debug
+    MAIL_HOST: '',
+    MAIL_PORT: 465,
+    MAIL_USER: '',
+    MAIL_PASS: '',
+    MAIL_FROM: '',    
+
     DEBUG: '',
 
     SPAM_ROUTE: 'spam',

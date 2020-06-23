@@ -7,7 +7,11 @@ var ReportSchema = new Schema({
     username: String,
     notes: String,
     picture: String, 
-    reportedBy: String,   
+    reportedBy: String, 
+    reporter: {
+        type: Schema.ObjectId,
+        ref: 'User'
+    },     
     isApproved: {
         type: Boolean,
         default: null

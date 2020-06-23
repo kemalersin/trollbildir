@@ -1,0 +1,93 @@
+.container.settings
+  .row
+    .col-md-3
+      .panel.panel-default.sidebar
+        .panel-heading Ayarlar
+        .panel-body
+          ul.nav.flex-column
+            li.nav-item(*ngFor='let item of menu')
+              a.nav-link.pointer(
+                *ngIf='(!item.forAdmin || isAdmin) && (!item.forMember || isMember)',
+                [ngClass]='{ "active": item.tabName == selectedTab }',
+                (click)='selectTab(item.tabName)'
+              )
+                | {{ item.heading }}
+    .col-md-1 &nbsp;
+    .col-md-8.content
+      .tab(*ngIf='selectedTab=="kullanici-adi"')
+        h3.title.text-muted
+          | Kullanıcı Adı          
+        hr
+        .row
+          .col-md-12
+            .panel.panel-default.form
+              .panel-body
+                form.form-inline((keypress.enter)='changeUsername()',
+                  [ngClass]="{ 'validated': validated && !submitted }",
+                  autocomplete='off'
+                )
+                  .form-group
+                    input.form-control(type='text',
+                        name='username',
+                        minlength='3',
+                        maxlength='50',
+                        required,
+                        [(ngModel)]='username',
+                        (keydown.space)='$event.preventDefault();',
+                        placeholder='Kullanıcı adınızı yazınız',
+                        autofocus
+                    )
+                    span.hidden-xs &nbsp;&nbsp;        
+                  .form-group
+                    input.form-control(type='text',
+                        name='name',
+                        minlength='3',
+                        maxlength='50',
+                        [(ngModel)]='name',
+                        placeholder='Tam adınızı yazınız'
+                    )
+                    span.hidden-xs &nbsp;&nbsp;
+                  button.btn.btn-default(type='submit', (click)='changeUsername()', [disabled]='submitted')
+                    span(*ngIf='!submitted') Kaydet
+                    i.fa.fa-spinner.fa-spin(*ngIf='submitted') 
+            span.text-muted
+              b Not:
+              = ' '
+              | Kullanıcı adınızı en fazla 3 kez değiştirebilirsiniz.
+      .tab(*ngIf='selectedTab=="parola"')
+        h3.title.text-muted Parola
+        hr
+        .row
+          .col-md-12
+            .panel.panel-default.form
+              .panel-body
+                form.form-inline((keypress.enter)='changePassword()',
+                  [ngClass]="{ 'validated': validated && !submitted }",
+                  autocomplete='off'
+                )
+                  .form-group
+                    input.form-control(type='password',
+                        name='oldPassword',
+                        minlength='3',
+                        maxlength='50',
+                        required,
+                        [(ngModel)]='oldPassword',
+                        (keydown.space)='$event.preventDefault();',
+                        placeholder='Eski parolanızı yazınız'
+                        autofocus
+                    )
+                    span.hidden-xs &nbsp;&nbsp;        
+                  .form-group
+                    input.form-control(type='password',
+                        name='newPassword',
+                        minlength='3',
+                        maxlength='50',
+                        required,
+                        [(ngModel)]='newPassword',
+                        (keydown.space)='$event.preventDefault();',
+                        placeholder='Yeni parolanızı yazınız'
+                    )
+                    span.hidden-xs &nbsp;&nbsp;
+                  button.btn.btn-default(type='submit', (click)='changePassword()', [disabled]='submitted')
+                    span(*ngIf='!submitted') Kaydet
+                    i.fa.fa-spinner.fa-spin(*ngIf='submitted')               

@@ -1,19 +1,31 @@
-form((keyup.enter)='addTroll()', autocomplete='off')
-  .panel.panel-info.centered
-    .panel-heading
-      h4.text-center Troll Bildirin
-    .panel-body
-      .form-group
-        label(for='username') Kullanıcı adı:
-        input#username.form-control(type='text', name='username', [(ngModel)]='username', autofocus)
-      .form-group
-        label(for='notes') Bildirme nedeni:
-        textarea#notes.form-control(name='notes', rows='4', cols='50', maxlength='280', [(ngModel)]='notes')
-      .form-group
-        <input #fileInput type="file" name="file" [imageToDataUrl]="imageOptions" accept="image/x-png,image/jpeg" (imageSelected)="imageSelected($event)" />
-    .panel-footer.text-right
-      button.btn.btn-primary(type='submit', (click)='addTroll()', [disabled]='submitting')
-        span(*ngIf='!submitting') Gönder
-        i.fa.fa-spinner.fa-spin(*ngIf='submitting')
-      | &nbsp;
-      a.btn.btn-default(routerLink='/bildirimlerim', ngClass='{ disabled: submitting }') Vazgeç
+form.container.centered((keyup.enter)='addTroll()',
+  [ngClass]="{ 'validated': validated && !submitted }",
+  autocomplete='off'
+)
+    .row
+        .col-sm-8.col-sm-offset-2.col-lg-6.col-lg-offset-3
+            .panel.panel-default.form
+              .panel-heading
+                h4.text-center Troll Bildirin
+              .panel-body
+                .form-group
+                  label(for='username') Kullanıcı adı:
+                  input#username.form-control(type='text', name='username', [(ngModel)]='username', required, autofocus)
+                .form-group
+                  label(for='notes') Bildirme nedeni:
+                  textarea#notes.form-control(name='notes', rows='4', cols='50', maxlength='280', required, [(ngModel)]='notes')
+                .form-group
+                    button.btn.btn-warning.btn-sm(type='button', (click)="fileInput.click()") Dosya ekle
+                    | &nbsp;&nbsp;&nbsp;
+                    span.small.filename.visible-xs-block.visible-sm-inline.visible-md-inline.visible-lg-inline.visible-xl-inline
+                        | {{fileToUpload ? fileToUpload.name : ''}}
+                        | &nbsp;&nbsp;
+                        a.pointer(*ngIf='fileToUpload', (click)="resetFile()")
+                            i.fa.fa-remove.text-danger
+                    <input #fileInput style="display:none;" type="file" name="file" [imageToDataUrl]="imageOptions" accept="image/x-png,image/jpeg" (imageSelected)="imageSelected($event)" />        
+              .panel-footer.text-right
+                button.btn.btn-primary(type='submit', (click)='addTroll()', [disabled]='submitted')
+                  span(*ngIf='!submitted') Gönder
+                  i.fa.fa-spinner.fa-spin(*ngIf='submitted')
+                | &nbsp;
+                a.btn.btn-default(routerLink='/bildirimlerim', ngClass='{ disabled: submitted }') Vazgeç

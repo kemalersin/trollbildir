@@ -11,10 +11,12 @@ import { AuthService } from "../../components/auth/auth.service";
 })
 export class MainComponent implements OnInit, OnDestroy {
     isUser;
+    isTwitterUser;
+
     isLoaded;
     isLoggedIn;
-    interval;
 
+    interval;
     redirect;
 
     currentUser = {};
@@ -40,10 +42,10 @@ export class MainComponent implements OnInit, OnDestroy {
             this.currentUser = user;
         });
 
-        this.authService.isUser().then((isUser) => {
-            this.isUser = isUser;
+        this.authService.isTwitterUser().then((is) => {
+            this.isTwitterUser = is;
 
-            if (isUser) {
+            if (is) {
                 this.redirect = true;
 
                 this.interval = setInterval(() => {

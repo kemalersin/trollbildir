@@ -18,7 +18,9 @@ export class AddReportComponent implements OnInit {
     username;
     notes;
 
-    submitting;
+    submitted;
+    validated;
+
     fileToUpload: File = null;
 
     @ViewChild("fileInput") fileInput: ElementRef;
@@ -45,7 +47,33 @@ export class AddReportComponent implements OnInit {
         this.reportService = reportService;
     }
 
-    ngOnInit() {}
+    ngOnInit() {
+        this.resetForm();
+    }
+
+    resetSubmit() {
+        this.validated = false;
+        this.submitted = false;
+    }  
+    
+    resetForm(resetSubmit = true) {
+        this.username = null;
+        this.notes = null;
+
+        this.resetFile();
+
+        if (resetSubmit) {
+            this.resetSubmit();
+        }
+    }    
+
+    resetFile() {
+        this.fileToUpload = null;
+
+        if (this.fileInput) {
+            this.fileInput.nativeElement.value = "";
+        }
+    }    
 
     imageSelected(imageResult: ImageResult) {
         const dataURLtoBlob = (dataURL) => {
@@ -68,25 +96,24 @@ export class AddReportComponent implements OnInit {
         );
 
         if (this.fileToUpload.size > maxFileSize) {
-            this.toastr.error(`Dosya boyutu ${maxFileSize / 1024} KB'tan fazla olamaz!`);
-
-            this.fileToUpload = null;
-            this.fileInput.nativeElement.value = "";
+            this.resetFile();
+            this.toastr.error(`Dosya boyutu ${maxFileSize / 1024} KB'tan fazla olamaz!`);            
         }
     }
 
     addTroll() {
         if (!(this.username && this.notes)) {
-            return this.toastr.error("Kullanıcı adı ya da bildirme nedeni boş olamaz!");
+            this.validated = true;
+            return this.toastr.error(errors.missingInformation);
         }
 
-        this.submitting = true;
+        this.submitted = true;
 
         this.reportService
             .create(this.username, this.notes, this.fileToUpload)
             .pipe(
                 finalize(() => {
-                    this.submitting = false;
+                    this.submitted = false;
                 })
             )
             .subscribe(

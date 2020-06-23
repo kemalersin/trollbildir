@@ -40,7 +40,7 @@
       p.text-center
         span(*ngIf='count===-1') Kayıtlar listeleniyor...
         span(*ngIf='count===0') Kayıt bulunamadı!
-        span(*ngIf='count>0') Toplam {{count}} önerilmiş kullanıcı:
+        span(*ngIf='count>0') Toplam {{ count | number }} önerilmiş kullanıcı:
       br
   .row(infiniteScroll,
       [infiniteScrollDistance]='0.1',
@@ -58,7 +58,13 @@
             p([innerHTML]='report.notes | linkify')
           p.info.small
             span(*ngIf='currentUser.role!="user"')
-              a([attr.href]='"https://www.twitter.com/" + report.reportedBy', target='_blank') {{report.reportedBy}}
+              span(*ngIf='report.reporter && report.reporter.provider!="twitter"')
+                b {{ report.reporter.username || 'isimsiz' }}
+              a(*ngIf='report.reportedBy || (report.reporter && report.reporter.provider=="twitter")',
+                [attr.href]='"https://www.twitter.com/" + (report.reportedBy || report.reporter.username)',
+                target='_blank'
+              )
+                | {{ report.reportedBy || report.reporter.username }}
               span &nbsp;tarafından&nbsp;
             span([ngClass]='{ "pull-right": currentUser.role=="user" }') {{report.createdAt | date: 'short'}} tarihinde bildirildi.
           p.commands

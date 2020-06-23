@@ -45,7 +45,7 @@ export function setup(User, config) {
                         user.isLocked = false;
                         user.isSuspended = false;
 
-                        user.name = profile.displayName,
+                        user.name = profile.displayName;
                         user.username = profile.username;
                         user.email = profile._json.email;
                         user.profile = profile._json;
@@ -61,6 +61,7 @@ export function setup(User, config) {
                         name: profile.displayName,
                         username: profile.username,
                         email: profile._json.email,
+                        provider: 'twitter',
                         profile: profile._json,
                         accessToken: token,
                         accessTokenSecret: tokenSecret,

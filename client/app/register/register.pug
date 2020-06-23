@@ -1,0 +1,47 @@
+form.container.centered((keypress.enter)='login()',
+    [ngClass]="{ 'validated': validated && !submitted }",
+    autocomplete='off'
+)
+    .row
+        .col-sm-8.col-sm-offset-2.col-lg-6.col-lg-offset-3
+            .panel.panel-default.form
+                .panel-heading
+                    h4.text-center
+                        span Yeni Kullanıcı
+                .panel-body
+                    .form-group
+                        label(for='email') E-Posta:
+                        input#email.form-control(type='email',
+                            name='email',
+                            [(ngModel)]='email',                            
+                            email,
+                            required,                            
+                            [pattern]='emailRegExp',                     
+                            (keydown.space)='$event.preventDefault();',
+                            autofocus
+                        )
+                    .form-group
+                        label(for='password') Parola:
+                        input#password.form-control(type='password',
+                            name='password',
+                            required,
+                            [(ngModel)]='password',
+                            (keydown.space)='$event.preventDefault();'
+                        )
+                    p.mb-0
+                        a.btn.btn-success.btn-sm(href='/auth/twitter')
+                            i.fa.fa-twitter
+                            | &nbsp;                             
+                            | Twitter ile bağlan 
+                .panel-footer
+                    .row
+                        .col-xs-12.col-md-6.captcha-col
+                            captcha([text]='captcha', (onChange)="captcha = $event.value")                            
+                        .col-xs-12.visible-xs.visible-sm &nbsp;
+                        .col-xs-12.col-md-6.text-right
+                            button.btn.btn-default(type='button', (click)='login()')
+                                | Giriş Yap
+                            | &nbsp;&nbsp;
+                            button.btn.btn-primary(type='submit', (click)='register()', [disabled]='submitted')
+                                span(*ngIf='!submitted') Kayıt Ol
+                                i.fa.fa-spinner.fa-spin(*ngIf='submitted')

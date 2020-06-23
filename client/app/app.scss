@@ -1,17 +1,38 @@
 $fa-font-path: '/assets/fonts/font-awesome/';
 
 @import '~ngx-toastr/toastr.css';
+@import "~animate.css/animate.css";
 @import '~font-awesome/scss/font-awesome';
 
 body {
-   overflow-y: scroll;
- }
+  overflow-y: scroll;
+}
 
- .centered {
+.centered,
+.h-centered,
+.v-centered {
   position: absolute;
+}
+
+.h-centered {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.v-centered {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.centered {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+.vcenter {
+  display: flex;
+  align-items: center;
 }
 
 .pointer {
@@ -22,27 +43,28 @@ body {
   margin-bottom: 20px;
 }
 
- a.navbar-brand {
+a.navbar-brand {
   font-weight: bold;
 }
 
 a[target='_blank'] {
+
   &:visited,
   &:link,
   &:active {
-      &.text-info {
-          color: #3a87ad;
-      }
+    &.text-info {
+      color: #3a87ad;
+    }
 
-      text-decoration: none;
+    text-decoration: none;
   }
 
   &:hover {
-      &.text-info {
-          color: #2d6987;
-      }
+    &.text-info {
+      color: #2d6987;
+    }
 
-      text-decoration: underline;
+    text-decoration: underline;
   }
 }
 
@@ -57,29 +79,41 @@ a[target='_blank'] {
   display: none !important;
 }
 
-.vcenter {
-  display: flex;
-  align-items: center;
-}
+.validated {
+  .ng-valid[required],
+  .ng-valid.required {
+    border-left: 5px solid #42A948;
+    /* green */
+  }
 
-.ng-valid[required], .ng-valid.required  {
-  border-left: 5px solid #42A948; /* green */
-}
+  .ng-invalid:not(form) {
+    border-left: 5px solid #a94442;
 
-.ng-invalid:not(form)  {
-  border-left: 5px solid #a94442; /* red */
+    /* red */
+    .ng-invalid:not(form) {
+      border-left: 5px solid #a94442;
+      /* red */
+    }
+  }
 }
 
 .spam {
-	cursor: pointer;
-	text-decoration: none;
-	color:#42A948;
+  cursor: pointer;
+  text-decoration: none;
+  color: #42A948;
+}
+
+.btn:focus,
+.btn:active,
+.navbar-default .navbar-nav>.active>a {
+  outline: 0 !important;
+  outline: none !important;
 }
 
 .trash {
-	cursor: pointer;
-	text-decoration: none;
-	color:rgb(209, 91, 71);
+  cursor: pointer;
+  text-decoration: none;
+  color: rgb(209, 91, 71);
 }
 
 .toast-top-center {
@@ -150,6 +184,38 @@ a[target='_blank'] {
   .ngx-dialog.custom-alert {
     .ngx-dialog-content {
       width: 400px !important;
+    }
+  }
+}
+
+@media (max-width: 568px) {
+  form.centered {
+    width: 100%;
+    left: initial;
+    transform: translateY(-50%);
+  }
+}
+
+@media screen and (max-width:767px) {
+  .panel.form {
+    .panel-body {
+      padding: 30px 40px 20px;
+    }
+
+    .panel-footer {
+      padding: 20px;
+    }
+  }
+}
+
+@media screen and (min-width:768px) {
+  .panel.form {
+    .panel-body {
+      padding: 50px 70px 40px;
+    }
+
+    .panel-footer {
+      padding: 30px;
     }
   }
 }

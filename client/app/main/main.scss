@@ -4,6 +4,16 @@ h3.centered {
     margin-bottom: 80px;
 }
 
-.btn.btn-lg.twitter {
-    padding-top: 10px;
+.btn.login {
+    font-size: 16px;    
+    padding: 10px 14px 12px;
+
+    &.outline {
+        border-color: #e95420;
+        background-color: #fff;
+
+        &:hover, &:active, &:link, &:visited {
+            color: #e95420;
+        }
+    }
 }
