@@ -6,6 +6,8 @@ export const port = process.env.PORT || 9000;
 export const spamLimitPerApp = process.env.SPAM_LIMIT_PER_APP || 900000;
 export const spamLimitPerUser = process.env.SPAM_LIMIT_PER_USER || 900;
 
+export const randomCount = process.env.RANDOM_COUNT || 10;
+
 export const redirectUrl = process.env.REDIRECT_URL || 'https://twitter.com/isimsizhareket';
 
 export const EMAIL_REGEXP = /^[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}$/;
@@ -54,6 +56,8 @@ export default {
     
     spamLimitPerApp,
     spamLimitPerUser,
+
+    randomCount,
 
     EMAIL_REGEXP
 };

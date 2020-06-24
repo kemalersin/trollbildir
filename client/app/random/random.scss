@@ -1,0 +1,51 @@
+p.refresh {
+    margin: 20px 0;
+
+    .btn {        
+        padding: 10px 20px;
+        text-transform: uppercase;
+
+        &:focus {
+            background-color: #e95420;
+            border-color: #e95420;
+        }
+    }
+}
+
+.panel.panel-default {
+    padding: 20px;
+
+    .buttons {
+        top: 10px;
+        right: 25px;
+        position: absolute;
+
+        .btn {
+            padding: 2px 6px;
+        }
+    }
+
+    p.image {
+        margin-top: 20px;
+    }
+
+    h4.username {
+        margin-bottom: 0;
+    }
+
+    p.description,
+    p.status {
+        min-height: 100px;
+        margin-bottom: 0;
+        display: flex;
+        text-align: left;
+        justify-content: center;
+        align-items: center;
+    }
+
+    p.status {
+        border: 2px dashed #ddd;
+        border-radius: 6px;
+        padding: 16px;
+    }
+}

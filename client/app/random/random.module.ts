@@ -4,6 +4,9 @@ import { BrowserModule } from "@angular/platform-browser";
 
 import { RouterModule, Routes } from "@angular/router";
 
+import { LinkyModule } from 'ngx-linky';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
+
 import { AuthGuard } from "../../components/auth/auth-guard.service";
 
 import { RandomComponent } from "./random.component";
@@ -20,7 +23,9 @@ const randomRoutes: Routes = [
     imports: [
         FormsModule,
         BrowserModule,
-        RouterModule.forChild(randomRoutes)        
+        RouterModule.forChild(randomRoutes),
+        LinkyModule,
+        TooltipModule.forRoot(),
     ],
     exports: [RandomComponent],
     declarations: [RandomComponent],

@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, Renderer2 } from "@angular/core";
 import { Router, NavigationEnd } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
 import { filter } from "rxjs/operators";
@@ -13,9 +13,9 @@ export class FooterComponent {
     daily;
     hidden;
 
-    static parameters = [HttpClient, Router];
+    static parameters = [HttpClient, Renderer2, Router];
 
-    constructor(private http: HttpClient, private router: Router) {
+    constructor(private http: HttpClient, private renderer: Renderer2, private router: Router) {
         router.events
             .pipe(filter((event) => event instanceof NavigationEnd))
             .subscribe((event: NavigationEnd) => {
@@ -30,7 +30,8 @@ export class FooterComponent {
             });
     }
 
-    hide () {
+    hide() {
         this.hidden = true;
+        this.renderer.addClass(document.body, "hidden-footer");
     }
 }

@@ -1,9 +1,11 @@
 import async from "async";
 import Twitter from "twitter";
 
+import { transform } from "lodash";
 import differenceInMinutes from "date-fns/differenceInMinutes";
 
 import Spam from "./spam.model";
+import List from "./list.model";
 import Log from "../log/log.model";
 import Stat from "../stat/stat.model";
 import Flag from "./flag.model";
@@ -11,14 +13,11 @@ import Queue from "./queue.model";
 import User from "../user/user.model";
 import config from "../../config/environment";
 
-function handleError(res, statusCode) {
-    statusCode = statusCode || 500;
-
-    return function (err) {
-        console.log(err);
-        return res.status(statusCode).send(err);
-    };
-}
+import {
+    handleError,
+    handleEntityNotFound,
+    respondWithResult
+} from '../../helpers';
 
 function getTwitter(user) {
     return new Twitter({
@@ -84,10 +83,8 @@ export function count(req, res, next) {
         isDeleted: { $ne: true }
     })
         .exec()
-        .then((count) => {
-            res.json(count);
-        })
-        .catch((err) => next(err));
+        .then(respondWithResult(res))
+        .catch(handleError(res));
 }
 
 export function index(req, res) {
@@ -100,8 +97,74 @@ export function index(req, res) {
         .skip(--index * config.dataLimit)
         .limit(config.dataLimit)
         .exec()
-        .then((spams) => {
-            res.status(200).json(spams);
+        .then(respondWithResult(res))
+        .catch(handleError(res));
+}
+
+export function random(req, res, next) {
+    List.aggregate([
+        {
+            $match: {
+                user: req.user._id,
+                type: { $in: [1, 2] }
+            }
+        },
+        { $group: { "_id": "$user", spams: { $push: "$spam" } } }
+    ]).exec()
+        .then((list) => {
+            var spams = list.length ? list[0].spams : [];
+
+            Spam.findRandom(
+                {
+                    _id: { $nin: spams },
+                    isDeleted: { $ne: true },
+                    isNotFound: { $ne: true },
+                    isSuspended: { $ne: true },
+                    "profile.description": { $ne: "" },
+                    "profile.status": { $exists: true }
+                },
+                {},
+                { limit: config.randomCount }, (err, spams) => {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    res.json(
+                        transform(
+                            spams,
+                            (result, spam) => result.push(spam.profile),
+                            []
+                        )
+                    );
+                });
+        })
+}
+
+export function hide(req, res) {
+    Spam.findOne({
+        "profile.id_str": req.params.id
+    })
+        .exec()
+        .then(handleEntityNotFound(res))
+        .then((spam) => {
+            if (spam) {
+                let list = new List();
+
+                list.user = req.user._id;
+                list.spam = spam._id;
+
+                if (req.body.spamed) {
+                    list.type = 2;
+                }
+
+                return list.save()
+                    .then(() => {
+                        res.json(spam.profile);
+                    })
+                    .catch(handleError(res));
+            }
+
+            return null;
         })
         .catch(handleError(res));
 }
@@ -171,14 +234,9 @@ export function show(req, res, next) {
         .skip(--index * config.dataLimit)
         .limit(config.dataLimit)
         .exec()
-        .then((spam) => {
-            if (!spam) {
-                return res.status(404).end();
-            }
-
-            res.json(spam);
-        })
-        .catch((err) => next(err));
+        .then(handleEntityNotFound(res))
+        .then(respondWithResult(res))
+        .catch(handleError(res));
 }
 
 export function destroy(req, res) {
@@ -230,7 +288,8 @@ export function resetTask(req, res) {
             }
 
             return res.status(304).end();
-        });
+        })
+        .catch(handleError(res));
 }
 
 export async function spam(req, res) {
@@ -312,10 +371,10 @@ export async function spam(req, res) {
                                         success++;
 
                                         queue.isSuspended = false;
-                                        queue.save();
+                                        queue.save();                                    
 
                                         Spam.updateOne({
-                                            username: queue.username
+                                            _id: queue.spamId
                                         }, {
                                             username: spamed.screen_name,
                                             profile: spamed
@@ -324,6 +383,14 @@ export async function spam(req, res) {
                                         user.lastQueueId = queue.id;
 
                                         user.save().then(() => {
+                                            let list = new List();
+
+                                            list.user = user.id;
+                                            list.spam = queue.spamId;
+                                            list.type = 3;
+    
+                                            list.save();  
+
                                             if (
                                                 (++userSpamCounter === queues.length) ||
                                                 (++innerLimit === config.spamLimitPerUser) ||

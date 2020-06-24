@@ -6,6 +6,18 @@ $fa-font-path: '/assets/fonts/font-awesome/';
 
 body {
   overflow-y: scroll;
+
+  &.hidden-footer {
+    .container.root {
+      margin-bottom: 10px;
+    }
+  }
+
+  &:not(.hidden-footer) {
+    .container.root {
+      margin-bottom: 70px;
+    }
+  }  
 }
 
 .centered,
@@ -129,8 +141,14 @@ a[target='_blank'] {
   }
 }
 
-.tooltip {
-  font-size: 14px;
+a.generated {
+  display: contents;
+}
+
+.alert {
+  ul {
+    padding-left: 25px;
+  }
 }
 
 .ngx-dialog.custom-alert {

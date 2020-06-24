@@ -5,7 +5,7 @@ import { RouterModule, Routes } from "@angular/router";
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { InfiniteScrollModule } from "ngx-infinite-scroll";
 import { CrystalLightboxModule } from "@crystalui/angular-lightbox";
-import { NgxLinkifyjsModule } from 'ngx-linkifyjs';
+import { LinkyModule } from 'ngx-linky';
 
 import { TwitterGuard } from "../../components/auth/twitter-guard.service";
 
@@ -37,7 +37,7 @@ const ReportRoutes: Routes = [
         TooltipModule.forRoot(),
         InfiniteScrollModule,
         CrystalLightboxModule,
-        NgxLinkifyjsModule.forRoot(),
+        LinkyModule,
     ],
     declarations: [ReportComponent],
     exports: [ReportComponent],

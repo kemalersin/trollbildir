@@ -1,2 +1,42 @@
-h1.centered.text-center
-    img.animate__animated.animate__swing.img-responsive(src='/assets/images/coming-soon.png')
+.container.root
+    .alert.alert-warning(*ngIf='!msgHidden')
+        button.close(type='button', data-dismiss='alert', aria-label='Close', (click)='closeMsg()')
+            span(aria-hidden='true') ×    
+        ul        
+            li Yenile düğmesine her tıkladığınızda veritabanımızdan rastgele {{ randomCount }} troll listelenir.
+            br.visible-xs
+            li
+                | Tekrar görmek istemediğiniz troll hesaplar için
+                = ' '
+                span(*ngIf='isTwitterUser') "Gizle" düğmesini
+                span(*ngIf='!isTwitterUser') "Bildirdim" ya da "Gizle" düğmelerini
+                = ' '
+                | kullanabilirsiniz.
+            br.visible-xs
+            li
+                | Uygulamamıza Twitter ile bağlandığınızda, veritabanımıza eklenen tüm troll hesapları otomatik olarak bildirilir.
+    p.refresh.text-right
+        button.btn.btn-primary((click)='refresh()')
+            i.fa.fa-spinner.fa-spin(*ngIf='loading')
+            span(*ngIf='!loading') Yenile                
+    .row
+        .col-md-6(*ngFor='let profile of profiles')
+            .panel.panel-default
+                .panel-body.text-center
+                    .buttons
+                        a.btn.btn-warning.btn-xs([attr.href]='"https://www.twitter.com/" + profile.screen_name', target='_blank', tooltip='Profile git', triggers='hover:click')
+                            i.fa.fa-external-link
+                        | &nbsp;
+                        a.btn.btn-primary.btn-xs.pointer((click)='hide(profile)', tooltip='Gizle')
+                            i.fa.fa-eye-slash
+                        span(*ngIf='!isTwitterUser')
+                            | &nbsp;
+                            a.btn.btn-default.btn-xs((click)='hide(profile, true)') Bildirdim
+                    p.image
+                        img.profile-image.img-circle([src]='profile.profile_image_url_https', width='48', height='48')
+                    h4.username
+                        a([attr.href]='"https://www.twitter.com/" + profile.screen_name', target='_blank') {{profile.screen_name}} 
+                    p.description([innerHTML]='profile.description | linky:{mention: "twitter", hashtag: "twitter", className: "generated"}')
+                    p.status([innerHTML]='profile.status.text | linky:{mention: "twitter", hashtag: "twitter", className: "generated"}')
+    h1.centered.text-center(*ngIf='!(loading || profiles.length)')
+        img.img-responsive.animate__animated.animate__fadeIn(src='/assets/images/troll-face.png')      

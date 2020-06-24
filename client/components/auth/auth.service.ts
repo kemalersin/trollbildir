@@ -185,11 +185,11 @@ export class AuthService {
         return !!this.currentUser._id;
     }
 
-    isTwitterUser(callback?) {
+    isTwitterUser(callback?, allRoles?) {
         return this.getCurrentUser().then((user) => {
             var is =
                 user.role &&
-                user.role === "user" &&
+                (allRoles || user.role === "user") &&
                 user.provider === "twitter";
             safeCb(callback)(is);
             return is;
