@@ -5,8 +5,6 @@ import { Router, ActivatedRoute } from "@angular/router";
 import { Ngxalert } from "ngx-dialogs";
 import { ToastrService } from "ngx-toastr";
 
-import { errors } from "../app.constants";
-
 import { MembersService } from "./members.service";
 
 @Component({

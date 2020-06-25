@@ -21,7 +21,6 @@ import { UserService } from "../../components/auth/user.service";
 @Component({
     selector: "settings",
     template: require("./settings.pug"),
-    styles: [require("./settings.scss")],
 })
 export class SettingsComponent implements OnInit {
     members: Object[];

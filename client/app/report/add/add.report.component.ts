@@ -121,10 +121,10 @@ export class AddReportComponent implements OnInit {
                 (res) => {
                     if (res.status === 302 || res.status === 304) {
                         if (res.error && res.error.username) {
-                            let block = res.error.username;
+                            let spam = res.error.username;
                             return this.router.navigate([
                                 "/bildirimlerim",
-                                block,
+                                spam,
                             ]);
                         }
 

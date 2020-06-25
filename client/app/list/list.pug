@@ -1,2 +1,58 @@
-h1.centered.text-center
-    img.animate__animated.animate__swing.img-responsive(src='/assets/images/coming-soon.png')
+.container
+  .row
+    .col-md-12
+      .form((keyup.enter)='getSpams()')
+        .input-group
+          input.form-control(type='text',
+            [(ngModel)]='username',
+            name='username',
+            placeholder='Aradığınız Twitter kullanıcısının adını yazınız'
+          )
+          .input-group-btn
+            button.btn.btn-default(type='submit', (click)='getSpams()') Ara
+      br
+.container.root.menu.no-margin
+  .row
+    .col-md-3
+      .panel.panel-default.sidebar
+        .panel-heading Listem
+        .panel-body
+          ul.nav.flex-column
+            li.nav-item(*ngFor='let item of menu')
+              a.nav-link.pointer(
+                [ngClass]='{ "active": item.tabName == selectedTab }',
+                (click)='selectTab(item.tabName)'
+              )
+                | {{ item.heading }}
+    .col-md-9.content
+        .row
+            .col-md-12
+                p.count
+                    span(*ngIf='loading') Kayıtlar listeleniyor...
+                    span(*ngIf='!loading && count<=0') Kayıt bulunamadı!
+                    span(*ngIf='!loading && count>0')
+                        span(*ngIf='!username') Troll hesaplar bugün
+                        = ' '
+                        | {{ count | number }} kez
+                        = ' '
+                        span(*ngIf='selectedTab=="bildirilenler"') bildirilmiş.
+                        span(*ngIf='selectedTab=="gizlenenler"') gizlenmiş.
+        h1.h-centered.troll(*ngIf='!loading && count<=0')
+            img.img-responsive.animate__animated.animate__fadeIn(src='/assets/images/ghost.png')  
+        .row(*ngIf='!loading && count>0', 
+            infiniteScroll,
+            [infiniteScrollDistance]='0.1',
+            [infiniteScrollThrottle]='50',
+            (scrolled)='onScroll()'
+            )
+            .col-md-4(*ngFor='let item of list')   
+                .panel.panel-default
+                    .panel-body
+                        p.text-center
+                            img.profile-image.img-circle([src]='item.spam.profile.profile_image_url_https', width='48', height='48')
+                        h4.text-center
+                            a([attr.href]='"https://www.twitter.com/" + item.spam.username', target='_blank') {{item.spam.username}}
+                        p.text-center
+                            i.fa.fa-check-circle-o.fa-2x(*ngIf='item.type==3')  
+                            a.trash(*ngIf='item.type!=3', (click)='delete(item)')
+                              span.fa.fa-trash.fa-2x

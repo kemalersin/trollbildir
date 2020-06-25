@@ -1,0 +1,17 @@
+.container.menu {
+    margin-top: 20px;
+
+    p.count {
+        margin-bottom: 25px;
+    }
+
+    .fa.fa-check-circle-o {
+        color: #42A948;
+    }
+}
+
+@media screen and (min-width:1024px) {
+    h1.troll {
+        margin-top: 100px;
+    }
+}

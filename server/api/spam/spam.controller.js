@@ -5,12 +5,13 @@ import { transform } from "lodash";
 import differenceInMinutes from "date-fns/differenceInMinutes";
 
 import Spam from "./spam.model";
-import List from "./list.model";
-import Log from "../log/log.model";
-import Stat from "../stat/stat.model";
 import Flag from "./flag.model";
 import Queue from "./queue.model";
+import List from "../list/list.model";
+import Log from "../log/log.model";
+import Stat from "../stat/stat.model";
 import User from "../user/user.model";
+
 import config from "../../config/environment";
 
 import {
@@ -92,7 +93,7 @@ export function index(req, res) {
 
     return Spam.find({
         isDeleted: { $ne: true }
-    }, "-salt -password")
+    })
         .sort({ _id: -1 })
         .skip(--index * config.dataLimit)
         .limit(config.dataLimit)

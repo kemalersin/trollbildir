@@ -80,6 +80,41 @@ a[target='_blank'] {
   }
 }
 
+.container.menu {
+  &:not(.no-margin) {
+    margin-top: 40px;
+  }
+
+  .title,
+  hr {
+    margin-top: 10px;
+  }
+
+  hr {
+    margin-bottom: 30px;
+  }
+
+  a.nav-link.active {
+    border-radius: 4px;
+    background-color: #e95420;
+    color: #fff;
+  }
+
+  .panel.form {
+    border-top-width: 1px;
+
+    .panel-body {
+      padding: 58px;
+
+      form {
+        input.form-control {
+          min-width: 235px;
+        }
+      }
+    }
+  }
+}
+
 .browserupgrade {
   margin: 0.2em 0;
   background: #ccc;
@@ -120,6 +155,17 @@ a[target='_blank'] {
 .navbar-default .navbar-nav>.active>a {
   outline: 0 !important;
   outline: none !important;
+}
+
+p.count {
+  margin-bottom: 0;
+
+  > span {
+    padding: 8px 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    line-height: 40px;
+  }
 }
 
 .trash {

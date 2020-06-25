@@ -14,6 +14,7 @@ export default function (app) {
     app.use('/api/stats', require('./api/stat'));
     app.use('/api/images', require('./api/image'));
     app.use('/api/spams', require('./api/spam'));
+    app.use('/api/lists', require('./api/list'));
     app.use('/api/reports', require('./api/report'));
     app.use('/api/users', require('./api/user'));
     app.use('/api/members', require('./api/member'));

@@ -24,7 +24,7 @@ export class RandomComponent implements OnInit {
 
     currentUser = {};
 
-    profiles: Object[];
+    profiles: Object[] = [];
 
     AuthService;
 
@@ -62,7 +62,7 @@ export class RandomComponent implements OnInit {
     }
 
     reset() {
-        this.refresh();
+        //this.refresh();
 
         this.authService.isTwitterUser(null, true).then((is) => {
             this.isTwitterUser = is;
