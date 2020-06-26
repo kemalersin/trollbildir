@@ -13,9 +13,10 @@ var all = {
     port: process.env.PORT || 9000,
 
     blockUrl: process.env.BLOCK_URL,
-    blockRoute: process.env.BLOCK_ROUTE,
+    blockRoute: process.env.BLOCK_ROUTE,    
 
     spamRoute: process.env.SPAM_ROUTE || 'spam',
+    checkRoute: process.env.CHECK_ROUTE || 'check',
 
     ip: process.env.IP || '0.0.0.0',
 
@@ -38,6 +39,8 @@ var all = {
         clientID: process.env.TWITTER_ID || 'id',
         masterUser: process.env.TWITTER_MASTER || '',
         clientSecret: process.env.TWITTER_SECRET || 'secret',
+        accessToken: process.env.TWITTER_ACCESS_TOKEN || 'token',
+        tokenSecret: process.env.TWITTER_TOKEN_SECRET || 'secret',        
         callbackURL: `${process.env.DOMAIN || ''}/auth/twitter/callback`
     },
 

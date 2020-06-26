@@ -6,6 +6,7 @@ mongoose.Promise = require('bluebird');
 
 var SpamSchema = new Schema({
     username: String,
+    checkedAt: Date,
     isDeleted: {
         type: Boolean,
         default: false

@@ -3,8 +3,12 @@
 export const env = process.env.NODE_ENV;
 
 export const port = process.env.PORT || 9000;
+
 export const spamLimitPerApp = process.env.SPAM_LIMIT_PER_APP || 900000;
 export const spamLimitPerUser = process.env.SPAM_LIMIT_PER_USER || 900;
+
+export const checkLimitPerApp = process.env.SPAM_LIMIT_PER_APP || 900;
+export const checkLimitPerUser = process.env.SPAM_LIMIT_PER_USER || 30;
 
 export const randomCount = process.env.RANDOM_COUNT || 10;
 
@@ -56,6 +60,9 @@ export default {
     
     spamLimitPerApp,
     spamLimitPerUser,
+
+    checkLimitPerApp,
+    checkLimitPerUser,    
 
     randomCount,
 

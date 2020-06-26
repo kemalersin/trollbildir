@@ -24,8 +24,8 @@ function getTwitter(user) {
     return new Twitter({
         consumer_key: config.twitter.clientID,
         consumer_secret: config.twitter.clientSecret,
-        access_token_key: user.accessToken,
-        access_token_secret: user.accessTokenSecret,
+        access_token_key: user ? user.accessToken : config.twitter.accessToken,
+        access_token_secret: user ? user.accessTokenSecret : config.twitter.tokenSecret,
     });
 }
 
@@ -372,7 +372,7 @@ export async function spam(req, res) {
                                         success++;
 
                                         queue.isSuspended = false;
-                                        queue.save();                                    
+                                        queue.save();
 
                                         Spam.updateOne({
                                             _id: queue.spamId
@@ -389,8 +389,8 @@ export async function spam(req, res) {
                                             list.user = user.id;
                                             list.spam = queue.spamId;
                                             list.type = 3;
-    
-                                            list.save();  
+
+                                            list.save();
 
                                             if (
                                                 (++userSpamCounter === queues.length) ||
@@ -432,6 +432,7 @@ export async function spam(req, res) {
                                                     Spam.updateOne({
                                                         username: queue.username
                                                     }, {
+                                                        checkedAt: new Date(),
                                                         isSuspended: queue.isSuspended,
                                                         isNotFound: queue.isNotFound
                                                     }).exec();
@@ -494,6 +495,92 @@ export async function spam(req, res) {
                     })
                 });
         });
+
+    res.status(204).end();
+}
+
+export async function check(req, res) {
+    let twitter = getTwitter();
+
+    Spam.find({
+        isDeleted: { $ne: true }
+    })
+        .sort({ "checkedAt": 1 })
+        .exec()
+        .then((spams) => {
+            let outerLimit = 0;
+
+            async.eachSeries(spams, (spam, cb) => {
+                if (outerLimit === config.checkLimitPerApp) {
+                    return cb('Break');
+                }
+
+                Spam.findById(spam._id).exec()
+                    .then((newSpam) => {                       
+                        if (Date(newSpam.checkedAt) != Date(spam.checkedAt)) {
+                            return cb();
+                        }
+
+                        twitter
+                            .get("users/lookup", {
+                                user_id: spam.profile.id_str
+                            })
+                            .then((spamed) => {
+                                if (spamed[0]) {
+                                    spam.username = spamed[0].screen_name;
+                                    spam.profile = spamed[0];
+
+                                    spam.isNotFound = false;
+                                    spam.isSuspended = false;
+
+                                    spam.checkedAt = new Date();
+
+                                    spam.save().then((spam) => {
+                                        Queue.updateMany({ spamId: spam._id }, {
+                                            $set: {
+                                                isNotFound: false,
+                                                isSuspended: false
+                                            }
+                                        })
+                                    });
+                                }
+
+                                outerLimit++;
+
+                                cb();
+                            })
+                            .catch((err) => {
+                                outerLimit++;
+                                console.log(spam.username, err);
+
+                                if (Array.isArray(err)) {
+                                    let errCode = err[0]["code"];
+
+                                    if (errCode == 17 || errCode == 34 || errCode == 50 || errCode == 63) {
+                                        (errCode == 63) ?
+                                            spam.isSuspended = true :
+                                            spam.isNotFound = true;
+
+                                        spam.checkedAt = new Date();
+
+                                        spam.save().then((spam) => {
+                                            Queue.updateMany({ spamId: spam._id }, {
+                                                $set: {
+                                                    isNotFound: true,
+                                                    isSuspended: true
+                                                }
+                                            })
+                                        });
+
+                                        return cb();
+                                    }
+                                }
+
+                                cb('Break');
+                            });
+                    });
+            }, () => { });
+        })
 
     res.status(204).end();
 }
