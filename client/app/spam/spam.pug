@@ -13,6 +13,18 @@
       br
   .row
     .col-md-12
+      <div class="btn-group pull-right" dropdown>
+        <button dropdownToggle type="button" class="btn btn-primary dropdown-toggle">
+          <span>{{ selectedListType.text }} &nbsp;</span>
+          <span class="caret"></span>
+        </button>
+        <ul *dropdownMenu class="dropdown-menu" role="menu">
+          <li role="menuitem"><a class="dropdown-item pointer" (click)="list(listTypes[0])">{{ listTypes[0].text }}</a></li>
+          <li class="divider dropdown-divider"></li>        
+          <li role="menuitem"><a class="dropdown-item pointer" (click)="list(listTypes[1])">{{ listTypes[1].text }}</a></li>
+          <li role="menuitem"><a class="dropdown-item pointer" (click)="list(listTypes[2])">{{ listTypes[2].text }}</a></li>          
+        </ul>
+      </div>
       p.count.text-center
         span(*ngIf='count===-1') Kayıtlar listeleniyor...
         span(*ngIf='count===0') Kayıt bulunamadı!
@@ -25,14 +37,32 @@
     )
     .col-md-3(*ngFor='let spam of spams')
       .panel.panel-default
-        .panel-body
+        .panel-body.spam-card
+          p.status
+            span.small(*ngIf='!(spam.isNotFound || spam.isSuspended)')
+              i.fa.fa-check
+              = ' '
+              | Aktif
+            span.small(*ngIf='spam.isNotFound || spam.isSuspended')
+              i.fa.fa-times
+              | &nbsp;
+              span(*ngIf='spam.isNotFound') Kapatılmış
+              span(*ngIf='!spam.isNotFound && spam.isSuspended') Askıda
+          p &nbsp;
           p.text-center
             img.profile-image.img-circle([src]='spam.profile.profile_image_url_https', width='48', height='48')
           h4.text-center
             a([attr.href]='"https://www.twitter.com/" + spam.username', target='_blank') {{spam.username}}
+          p.small.text-center(*ngIf='!spam.checkedAt') Henüz kontrol edilmedi.
+          p.small.text-center(*ngIf='spam.checkedAt')
+            b Son kontrol:
+            = ' '
+            | {{spam.checkedAt | date: 'short'}}          
           p.text-center
-            a.spam((click)='queue(spam)', tooltip='Bildir')
+            a.spam(*ngIf='!spam.isNotFound', (click)='queue(spam)', tooltip='Bildir')
               span.fa.fa-crosshairs.fa-2x
-            | &nbsp;&nbsp;&nbsp;
+            span(*ngIf='!spam.isNotFound') &nbsp;&nbsp;&nbsp;
             a.trash((click)='delete(spam)')
               span.fa.fa-trash.fa-2x
+  h1.centered.text-center(*ngIf='count===0')
+      img.img-responsive.animate__animated.animate__fadeIn(src='/assets/images/ghost.png')                    

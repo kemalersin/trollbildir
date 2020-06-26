@@ -1,6 +1,6 @@
 .mini-stat(*ngIf='!hidden && (perUser || daily)')
   p.text-center
-    span.hidden-xs(*ngIf='perUser && perUser.total')
+    span.hidden-xs.hidden-sm(*ngIf='perUser && perUser.total')
       .fa.fa-square
       | &nbsp;&nbsp;
       span(*ngIf='perUser.today==0 || perUser.today==perUser.total')
@@ -23,7 +23,7 @@
       span(*ngIf='daily.today!=0 && daily.today!=daily.total')
         | Troll hesapları bugün
         span.count {{ daily.today | number }}
-        span.hidden-xs
+        span.hidden-xs.hidden-sm
           | toplamda
           span.count {{ daily.total | number }}
         | kez bildirdik.

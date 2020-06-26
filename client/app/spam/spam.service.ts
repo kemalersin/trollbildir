@@ -16,17 +16,21 @@ export class SpamService {
         this.http = http;
     }
 
-    count(): Observable<number> {
-        return this.http.get("/api/spams/count") as Observable<number>;
+    count(listType?): Observable<number> {
+        return this.http.get(
+            `/api/spams/count/?listType=${listType || 0}`
+        ) as Observable<number>;
     }
 
     random(): Observable<SpamType[]> {
         return this.http.get("/api/spams/random") as Observable<SpamType[]>;
-    }    
+    }
 
-    query(username = "", index = 1): Observable<SpamType[]> {
+    query(username = "", index = 1, listType = 0): Observable<SpamType[]> {
         return this.http.get(
-            `/api/spams/${username ? username : ""}?index=${index}`
+            `/api/spams/${
+                username ? username : ""
+            }?index=${index}&listType=${listType}`
         ) as Observable<SpamType[]>;
     }
 
@@ -36,9 +40,9 @@ export class SpamService {
 
     hide(profile, spamed?) {
         return this.http
-            .post(`/api/spams/hide/${profile.id_str}`, {spamed})
+            .post(`/api/spams/hide/${profile.id_str}`, { spamed })
             .pipe(map(() => profile));
-    }    
+    }
 
     remove(spam) {
         return this.http

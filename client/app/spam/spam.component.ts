@@ -1,13 +1,16 @@
 import { Component, OnInit } from "@angular/core";
 import { Location } from "@angular/common";
-import { finalize } from "rxjs/operators";
 import { Router, ActivatedRoute } from "@angular/router";
 
 import { Ngxalert } from "ngx-dialogs";
 import { ToastrService } from "ngx-toastr";
 
+import { find } from "lodash";
+
 import { errors } from "../app.constants";
 import { SpamService } from "./spam.service";
+
+import { safeCb } from "../../components/util";
 
 @Component({
     selector: "spam",
@@ -17,9 +20,30 @@ import { SpamService } from "./spam.service";
 export class SpamComponent implements OnInit {
     username;
     spams: Object[];
+
     newSpam = "";
 
-    index = 1;
+    selectedListType;
+
+    listTypes: Object[] = [
+        {
+            text: "Tümü",
+            url: "bildirilenler",
+            index: 0,
+        },
+        {
+            text: "Kapatılanlar",
+            url: "kapatilanlar",
+            index: 1,
+        },
+        {
+            text: "Askıya alınanlar",
+            url: "askiya-alinanlar",
+            index: 2,
+        },
+    ];
+
+    index = 0;
     count = -1;
 
     alert: any = new Ngxalert();
@@ -47,26 +71,62 @@ export class SpamComponent implements OnInit {
 
     ngOnInit() {
         this.route.paramMap.subscribe((params) => {
-            this.username = params.get("username");
+            const param = params.get("param");
 
-            this.spamService.query(this.username).subscribe((spams) => {
-                this.spams = spams;
+            this.selectedListType = param
+                ? find(this.listTypes, (type) => type["url"] == param)
+                : this.listTypes[0];
 
+            if (!(param === "kapatilanlar" || param === "askiya-alinanlar")) {
+                this.username = param;
+                this.selectedListType = this.listTypes[0];
+            }              
+
+            this.getSpams((spams) => {
                 this.username
                     ? (this.count = spams.length)
                     : this.spamService
-                          .count()
+                          .count(this.selectedListType.index)
                           .subscribe((count) => (this.count = count));
             });
         });
     }
 
-    onScroll() {
+    getSpams(cb?) {
         this.spamService
-            .query(this.username, ++this.index)
+            .query(this.username, ++this.index, this.selectedListType.index)
             .subscribe((spams) => {
-                this.spams = [...this.spams, ...spams];
+                this.spams =
+                    this.spams && this.spams[0]
+                        ? [...this.spams, ...spams]
+                        : spams;
+
+                safeCb(cb)(spams);
             });
+    }
+
+    reset(listType?) {
+        this.index = 0;
+        this.count = -1;
+        this.spams = [];
+        this.username = null;        
+        this.selectedListType = listType || this.listTypes[0];
+    }
+
+    list(listType) {    
+        if (!this.username && listType == this.selectedListType) {
+            return;
+        }
+        
+        this.reset();
+
+        listType.index == 0
+            ? this.router.navigate([`/${listType.url}`])
+            : this.router.navigate(["/bildirilenler", listType.url]);
+    }
+
+    onScroll() {
+        this.getSpams();
     }
 
     addSpam() {
@@ -94,6 +154,8 @@ export class SpamComponent implements OnInit {
                             spam = res.error.username;
                         }
 
+                        this.reset();
+
                         return this.router.navigate(["/bildirilenler", spam]);
                     }
 
@@ -117,10 +179,10 @@ export class SpamComponent implements OnInit {
                 this.alert.removeAlert("spam-user");
 
                 this.spamService
-                .queue(spam)
-                .subscribe(() =>
-                    this.toastr.error("Kullanıcı tekrar kuyruğa alındı.")
-                );
+                    .queue(spam)
+                    .subscribe(() =>
+                        this.toastr.error("Kullanıcı tekrar kuyruğa alındı.")
+                    );
             },
         });
     }

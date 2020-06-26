@@ -1,7 +1,7 @@
 import async from "async";
 import Twitter from "twitter";
 
-import { transform } from "lodash";
+import { assignIn, transform } from "lodash";
 import differenceInMinutes from "date-fns/differenceInMinutes";
 
 import Spam from "./spam.model";
@@ -19,6 +19,7 @@ import {
     handleEntityNotFound,
     respondWithResult
 } from '../../helpers';
+import { assign } from "core-js/fn/object";
 
 function getTwitter(user) {
     return new Twitter({
@@ -27,6 +28,27 @@ function getTwitter(user) {
         access_token_key: user ? user.accessToken : config.twitter.accessToken,
         access_token_secret: user ? user.accessTokenSecret : config.twitter.tokenSecret,
     });
+}
+
+function getSpamFilter(req) {
+    const listType = req.query.listType || 0;
+
+    var filter = {
+        isDeleted: { $ne: true }
+    };
+
+    if (listType == 1) {
+        filter = assignIn(filter, {
+            isNotFound: true
+        });
+    }
+    else if (listType == 2) {
+        filter = assignIn(filter, {
+            isSuspended: true
+        });
+    }
+
+    return filter;
 }
 
 function createMultiple(req, res, usernames) {
@@ -80,10 +102,15 @@ function createMultiple(req, res, usernames) {
 }
 
 export function count(req, res, next) {
-    return Spam.count({
-        isDeleted: { $ne: true }
-    })
-        .exec()
+    return Spam.count(getSpamFilter(req))
+        .then((spams) => {
+            if (!spams) {
+                res.json(0);
+                return null;
+            }
+
+            return spams;
+        })
         .then(respondWithResult(res))
         .catch(handleError(res));
 }
@@ -91,13 +118,11 @@ export function count(req, res, next) {
 export function index(req, res) {
     var index = +req.query.index || 1;
 
-    return Spam.find({
-        isDeleted: { $ne: true }
-    })
+    return Spam.find(getSpamFilter(req))
         .sort({ _id: -1 })
         .skip(--index * config.dataLimit)
         .limit(config.dataLimit)
-        .exec()
+        .then(handleEntityNotFound(res))
         .then(respondWithResult(res))
         .catch(handleError(res));
 }
@@ -503,7 +528,8 @@ export async function check(req, res) {
     let twitter = getTwitter();
 
     Spam.find({
-        isDeleted: { $ne: true }
+        isDeleted: { $ne: true },
+        isNotFound: { $ne: true }
     })
         .sort({ "checkedAt": 1 })
         .exec()
@@ -516,7 +542,7 @@ export async function check(req, res) {
                 }
 
                 Spam.findById(spam._id).exec()
-                    .then((newSpam) => {                       
+                    .then((newSpam) => {
                         if (Date(newSpam.checkedAt) != Date(spam.checkedAt)) {
                             return cb();
                         }
