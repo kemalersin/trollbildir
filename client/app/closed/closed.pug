@@ -31,7 +31,7 @@
                     h4.username
                         span.text-primary {{spam.profile.screen_name}} 
                     p.description([innerHTML]='spam.profile.description | linky:{mention: "twitter", hashtag: "twitter", className: "generated"}')
-                    p.status([innerHTML]='spam.profile.status ? spam.profile.status.text : "" | linky:{mention: "twitter", hashtag: "twitter", className: "generated"}')
+                    p.status([innerHTML]='(spam.profile.status ? spam.profile.status.text : "") | linky:{mention: "twitter", hashtag: "twitter", className: "generated"}')
                     p.dates
                         span.date
                             b.text-primary Eklenme:
