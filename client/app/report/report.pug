@@ -91,3 +91,5 @@
               | &nbsp;&nbsp;
               a.trash((click)='delete(report)')
                 span.fa.fa-trash
+  h1.centered.text-center(*ngIf='count===0')
+      img.img-responsive.animate__animated.animate__fadeIn(src='/assets/images/ghost.png')                

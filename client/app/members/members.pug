@@ -29,3 +29,5 @@
           p.text-center
             a.trash((click)='delete(member)')
               span.fa.fa-trash.fa-2x
+  h1.centered.text-center(*ngIf='count===0')
+      img.img-responsive.animate__animated.animate__fadeIn(src='/assets/images/ghost.png')              
