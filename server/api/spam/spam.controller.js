@@ -118,8 +118,11 @@ export function count(req, res, next) {
 export function index(req, res) {
     var index = +req.query.index || 1;
 
+    const listType = req.query.listType || 0;
+    const sortBy = listType == 0 ? { _id: -1 } : { checkedAt: -1 };
+
     return Spam.find(getSpamFilter(req))
-        .sort({ _id: -1 })
+        .sort(sortBy)
         .skip(--index * config.dataLimit)
         .limit(config.dataLimit)
         .then(handleEntityNotFound(res))
@@ -472,7 +475,7 @@ export async function spam(req, res) {
                                                         errCode == 89 ||
                                                         errCode == 326
                                                     ) {
-                                                        if (errCode == 32 || errCode == 89) {
+                                                        if (errCode == 32 || errCode == 64) {
                                                             user.isSuspended = true;
                                                         }
                                                         else if (errCode == 36) {

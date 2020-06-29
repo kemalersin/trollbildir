@@ -14,8 +14,7 @@ import { safeCb } from "../../components/util";
 
 @Component({
     selector: "spam",
-    template: require("./spam.pug"),
-    styles: [require("./spam.scss")],
+    template: require("./spam.pug")
 })
 export class SpamComponent implements OnInit {
     username;

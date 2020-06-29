@@ -21,6 +21,8 @@
           a(routerLink='/bildirilenler') Bildirilenler     
         li(*ngIf='isTwitterUser', routerLinkActive='active')
           a(routerLink='/bildirimlerim') Bildirimlerim  
+        li(*ngIf='isTwitterUser || isMember', routerLinkActive='active')
+          a(routerLink='/kapatilanlar') Kapatılanlar           
         li(*ngIf='isLoggedIn', routerLinkActive='active')
           a(routerLink='/rastgele') Rastgele   
         li(*ngIf='isLoggedIn', routerLinkActive='active')

@@ -23,6 +23,7 @@ import { MainModule } from "./main/main.module";
 import { LoginModule } from "./login/login.module";
 import { RegisterModule } from "./register/register.module";
 import { SettingsModule } from "./settings/settings.module";
+import { ClosedModule } from "./closed/closed.module";
 import { RandomModule } from "./random/random.module";
 import { ListModule } from "./list/list.module";
 import { PasswordResetModule } from "./password/password.reset/password.reset.module";
@@ -73,6 +74,7 @@ const appRoutes: Routes = [
         SpamModule,
         ReportModule,
         AddReportModule,
+        ClosedModule,
         RandomModule,
         ListModule,        
         NgxDialogsModule,

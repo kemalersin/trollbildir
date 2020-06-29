@@ -1,0 +1,46 @@
+.container.root  
+    .row
+        .col-md-12
+            .form((keyup.enter)='find()')
+                .input-group
+                    input.form-control(type='text',
+                    [(ngModel)]='username',
+                    name='username',
+                    placeholder='Aradığınız Twitter kullanıcısının adını yazınız'
+                    )
+                    .input-group-btn
+                        button.btn.btn-default(type='submit', (click)='find()') Ara
+            br
+    .row
+        .col-md-12
+            p.count.text-center
+                span(*ngIf='count===-1') Kayıtlar listeleniyor...
+                span(*ngIf='count===0') Kayıt bulunamadı!
+                span(*ngIf='count>0') Toplam {{ count | number }} kapatılmış hesap.
+            br     
+    .row(infiniteScroll,
+        [infiniteScrollDistance]='0.1',
+        [infiniteScrollThrottle]='50',
+        (scrolled)='onScroll()'
+    )
+        .col-md-6(*ngFor='let spam of spams')
+            .panel.panel-default.profiles.without-buttons
+                .panel-body.text-center
+                    p.image
+                        img.profile-image.img-circle([src]='spam.profile.profile_image_url_https', width='48', height='48')
+                    h4.username
+                        span.text-primary {{spam.profile.screen_name}} 
+                    p.description([innerHTML]='spam.profile.description | linky:{mention: "twitter", hashtag: "twitter", className: "generated"}')
+                    p.status([innerHTML]='spam.profile.status ? spam.profile.status.text : "" | linky:{mention: "twitter", hashtag: "twitter", className: "generated"}')
+                    p.dates
+                        span.date
+                            b.text-primary Eklenme:
+                            | &nbsp;
+                            | {{ spam.createdAt | date: 'short' }}
+                        span.date
+                            b.text-primary Son Kontrol:
+                            | &nbsp;
+                            span(*ngIf='!spam.checkedAt') Yok                        
+                            span(*ngIf='spam.checkedAt') {{ spam.checkedAt | date: 'short' }}   
+    h1.centered.text-center(*ngIf='count===0')
+        img.img-responsive.animate__animated.animate__fadeIn(src='/assets/images/ghost.png')                                                        

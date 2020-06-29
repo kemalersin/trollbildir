@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
-import { setInterval, clearInterval } from "timers";
+import { clearInterval } from "timers";
 
-import { redirectUrl } from "../app.constants";
+import { ToastrService } from "ngx-toastr";
 import { AuthService } from "../../components/auth/auth.service";
 
 @Component({
@@ -10,6 +10,7 @@ import { AuthService } from "../../components/auth/auth.service";
     styles: [require("./main.scss")],
 })
 export class MainComponent implements OnInit, OnDestroy {
+    isAdmin;
     isTwitterUser;
 
     isLoaded;
@@ -20,9 +21,12 @@ export class MainComponent implements OnInit, OnDestroy {
 
     currentUser = {};
 
-    static parameters = [AuthService];
+    static parameters = [AuthService, ToastrService];
 
-    constructor(private authService: AuthService) {
+    constructor(
+        private authService: AuthService,
+        private toastr: ToastrService
+    ) {
         this.reset();
 
         this.authService.currentUserChanged.subscribe((user) => {
@@ -35,33 +39,19 @@ export class MainComponent implements OnInit, OnDestroy {
         this.authService.isLoggedIn().then((is) => {
             this.isLoaded = true;
             this.isLoggedIn = is;
-        });
 
-        this.authService.getCurrentUser().then((user) => {
-            this.currentUser = user;
-        });
-
-        this.authService.isTwitterUser().then((is) => {
-            this.isTwitterUser = is;
-
-            if (is) {
-                this.redirect = true;
-
-                this.interval = setInterval(() => {
-                    if (this.redirect) {
-                        window.location.href = redirectUrl;
-                    }
-                }, 1000 * 60 * 2);
-            }
+            this.isAdmin = is && this.authService.isAdminSync();
+            this.isTwitterUser = is && this.authService.isTwitterUserSync();
         });
     }
 
     ngOnInit() {}
 
     ngOnDestroy() {
+        this.toastr.clear();
         this.redirect = false;
 
-        if (this.interval) {            
+        if (this.interval) {
             clearInterval(this.interval);
         }
     }

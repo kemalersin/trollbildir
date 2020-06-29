@@ -4,8 +4,8 @@ import { BrowserModule } from "@angular/platform-browser";
 
 import { RouterModule, Routes } from "@angular/router";
 
-import { LinkyModule } from 'ngx-linky';
-import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { LinkyModule } from "ngx-linky";
+import { TooltipModule } from "ngx-bootstrap/tooltip";
 
 import { AuthGuard } from "../../components/auth/auth-guard.service";
 

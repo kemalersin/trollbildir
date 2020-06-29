@@ -7,7 +7,7 @@ import { AuthService } from "../auth/auth.service";
 
 @Component({
     selector: "navbar",
-    template: require("./navbar.pug")
+    template: require("./navbar.pug"),
 })
 export class NavbarComponent {
     isCollapsed = true;
@@ -32,7 +32,10 @@ export class NavbarComponent {
     AuthService;
 
     static parameters = [AuthService, Router];
-    constructor(private authService: AuthService, private router: Router) {
+    constructor(
+        private authService: AuthService,
+        private router: Router
+    ) {
         this.AuthService = authService;
 
         this.Router = router;
@@ -54,22 +57,10 @@ export class NavbarComponent {
     reset() {
         this.AuthService.isLoggedIn().then((is) => {
             this.isLoggedIn = is;
-        });
 
-        this.AuthService.isMember().then((is) => {
-            this.isMember = is;
-        });
-
-        this.authService.isTwitterUser().then((is) => {
-            this.isTwitterUser = is;
-        });        
-
-        this.AuthService.isAdmin().then((is) => {
-            this.isAdmin = is;
-        });
-
-        this.AuthService.getCurrentUser().then((user) => {
-            this.currentUser = user;
+            this.isMember = is && this.AuthService.isMemberSync();
+            this.isTwitterUser = is && this.AuthService.isTwitterUserSync();
+            this.isAdmin = is && this.AuthService.isAdminSync(); 
         });
     }
 

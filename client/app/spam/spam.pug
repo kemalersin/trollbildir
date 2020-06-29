@@ -13,7 +13,7 @@
       br
   .row
     .col-md-12
-      <div class="btn-group pull-right" dropdown>
+      <div class="btn-group pull-right count-next" dropdown>
         <button dropdownToggle type="button" class="btn btn-primary dropdown-toggle">
           <span>{{ selectedListType.text }} &nbsp;</span>
           <span class="caret"></span>
@@ -28,7 +28,9 @@
       p.count.text-center
         span(*ngIf='count===-1') Kayıtlar listeleniyor...
         span(*ngIf='count===0') Kayıt bulunamadı!
-        span(*ngIf='count>0') Toplam {{ count | number }} bildirilmiş kullanıcı.
+        span(*ngIf='count>0')
+          span.hidden-xs Toplam&nbsp;
+          | {{count | number}} bildirilmiş kullanıcı.
       br
   .row(infiniteScroll,
       [infiniteScrollDistance]='0.1',
@@ -37,7 +39,7 @@
     )
     .col-md-3(*ngFor='let spam of spams')
       .panel.panel-default
-        .panel-body.spam-card
+        .panel-body.user-card
           p.status
             span.small(*ngIf='!(spam.isNotFound || spam.isSuspended)')
               i.fa.fa-check

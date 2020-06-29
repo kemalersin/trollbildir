@@ -2,6 +2,7 @@
 import jwt from 'jsonwebtoken';
 import randomstring from 'randomstring';
 
+import { assignIn } from "lodash";
 import differenceInHours from "date-fns/differenceInHours";
 
 import User from './user.model';
@@ -18,8 +19,44 @@ import {
 
 import mail from '../../components/mail';
 
+function getUserFilter(req) {
+    const listType = req.query.listType || 0;
+
+    var filter = {
+        provider: "twitter",
+        $and: [
+            { role: { $ne: "admin" } },
+            { _id: { $ne: req.user._id } }
+        ],
+        isDeleted: { $ne: true }
+    };
+
+    if (listType == 1) {
+        filter = assignIn(filter, {
+            isLocked: true
+        });
+    }
+    else if (listType == 2) {
+        filter = assignIn(filter, {
+            isBlocked: true
+        });
+    }
+    else if (listType == 3) {
+        filter = assignIn(filter, {
+            isSuspended: true
+        });
+    }
+    else if (listType == 4) {
+        filter = assignIn(filter, {
+            tokenExpired: true
+        });
+    }
+
+    return filter;
+}
+
 export function count(req, res, next) {
-    return User.count({ provider: 'twitter' }).exec()
+    return User.count(getUserFilter(req)).exec()
         .then((count) => {
             res.json(count);
         })
@@ -29,7 +66,7 @@ export function count(req, res, next) {
 export function index(req, res) {
     var index = +req.query.index || 1;
 
-    return User.find({ provider: 'twitter' }, '-accessToken -accessTokenSecret')
+    return User.find(getUserFilter(req), '-accessToken -accessTokenSecret')
         .sort({ _id: -1 })
         .skip(--index * config.dataLimit)
         .limit(config.dataLimit)
@@ -113,7 +150,11 @@ export function show(req, res, next) {
 
     return User.find({
         username: { $regex: new RegExp(username, 'i') },
-        provider: 'twitter'
+        provider: "twitter",
+        $and: [
+            { role: { $ne: "admin" } },
+            { _id: { $ne: req.user._id } }
+        ]
     })
         .skip(--index * config.dataLimit)
         .limit(config.dataLimit)
@@ -152,7 +193,7 @@ export async function changeUsername(req, res) {
 
             if (user.provider == 'twitter') {
                 return res.status(401).end();
-            }            
+            }
 
             if (user.username == username && user.name == name) {
                 return res.status(204).end();
@@ -285,6 +326,56 @@ export function me(req, res, next) {
             return res.json(user);
         })
         .catch(err => next(err));
+}
+
+export function block(req, res) {
+    if (req.body.id === req.user._id) {
+        return res.status(403).end()
+    }
+
+    return User.findById(req.body.id)
+        .exec()
+        .then(handleEntityNotFound(res))
+        .then((user) => {
+            if (user) {
+                if (user.role == "admin") {
+                    return res.status(403).end();
+                }
+
+                user.isBanned = true;
+                user.save();
+
+                res.status(204).end()
+            }
+
+            return null;
+        })
+        .catch(handleError(res));
+}
+
+export function destroy(req, res) {
+    if (req.body.id === req.user._id) {
+        return res.status(403).end();
+    }
+
+    return User.findById(req.params.id)
+        .exec()
+        .then(handleEntityNotFound(res))
+        .then((user) => {
+            if (user) {
+                if (user.role == "admin") {
+                    return res.status(403).end();
+                }
+
+                user.isDeleted = true;
+                user.save();
+
+                res.status(204).end();
+            }
+
+            return null;
+        })
+        .catch(handleError(res));
 }
 
 export function authCallback(req, res) {

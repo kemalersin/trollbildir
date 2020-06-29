@@ -20,13 +20,17 @@ export class UserService {
         this.http = http;
     }
 
-    count(): Observable<number> {
-        return this.http.get("/api/users/count") as Observable<number>;
+    count(listType?): Observable<number> {
+        return this.http.get(
+            `/api/users/count/?listType=${listType || 0}`
+        ) as Observable<number>;
     }
 
-    query(username, index = 1): Observable<UserType[]> {
+    query(username, index = 1, listType = 0): Observable<UserType[]> {
         return this.http.get(
-            `/api/users/${username ? username : ""}?index=${index}`
+            `/api/users/${
+                username ? username : ""
+            }?index=${index}&listType=${listType}`
         ) as Observable<UserType[]>;
     }
 
@@ -62,13 +66,21 @@ export class UserService {
             username,
             name,
         });
-    }    
+    }
 
     changePassword(user, oldPassword, newPassword) {
         return this.http.put(`/api/users/${user.id || user._id}/password`, {
             oldPassword,
             newPassword,
         });
+    }
+
+    ban(user) {
+        return this.http
+            .post("/api/users/block", {
+                id: user.id || user._id,
+            })
+            .pipe(map(() => user));
     }
 
     remove(user) {

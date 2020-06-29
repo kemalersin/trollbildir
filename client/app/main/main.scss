@@ -4,15 +4,28 @@ h3.centered {
     margin-bottom: 80px;
 }
 
+.twitter-info {
+    top: 15px;
+    color: #fff;
+    z-index: 9999;
+
+    a {
+        color: inherit;
+    }
+}
+
 .btn.login {
-    font-size: 16px;    
+    font-size: 16px;
     padding: 10px 14px 12px;
 
     &.outline {
         border-color: #e95420;
         background-color: #fff;
 
-        &:hover, &:active, &:link, &:visited {
+        &:hover,
+        &:active,
+        &:link,
+        &:visited {
             color: #e95420;
         }
     }

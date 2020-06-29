@@ -3,6 +3,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 import { AuthGuard } from '../../components/auth/auth-guard.service';
@@ -11,7 +13,7 @@ import { UsersComponent } from './users.component';
 
 
 const usersRoutes: Routes = [{
-    path: 'uyeler/:username',
+    path: 'uyeler/:param',
     component: UsersComponent,
     canActivate: [AuthGuard]
 }, {
@@ -26,6 +28,8 @@ const usersRoutes: Routes = [{
         BrowserModule,
         FormsModule,
         RouterModule.forChild(usersRoutes),
+        TooltipModule.forRoot(),
+        BsDropdownModule.forRoot(),  
         InfiniteScrollModule
     ],
     declarations: [

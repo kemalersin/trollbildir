@@ -15,13 +15,13 @@
             br.visible-xs
             li
                 | Uygulamamıza Twitter ile bağlandığınızda, veritabanımıza eklenen tüm troll hesapları otomatik olarak bildirilir.
-    p.refresh.text-right
+    p.profiles.refresh.text-right
         button.btn.btn-primary((click)='refresh()')
             i.fa.fa-spinner.fa-spin(*ngIf='loading')
             span(*ngIf='!loading') Yenile                
     .row
         .col-md-6(*ngFor='let profile of profiles')
-            .panel.panel-default
+            .panel.panel-default.profiles
                 .panel-body.text-center
                     .buttons
                         a.btn.btn-warning.btn-xs([attr.href]='"https://www.twitter.com/" + profile.screen_name', target='_blank', tooltip='Profile git', triggers='hover:click')
@@ -37,6 +37,6 @@
                     h4.username
                         a([attr.href]='"https://www.twitter.com/" + profile.screen_name', target='_blank') {{profile.screen_name}} 
                     p.description([innerHTML]='profile.description | linky:{mention: "twitter", hashtag: "twitter", className: "generated"}')
-                    p.status([innerHTML]='profile.status.text | linky:{mention: "twitter", hashtag: "twitter", className: "generated"}')
+                    p.status([innerHTML]='profile.status ? profile.status.text : "" | linky:{mention: "twitter", hashtag: "twitter", className: "generated"}')
     h1.centered.text-center(*ngIf='!(loading || profiles.length)')
         img.img-responsive.animate__animated.animate__fadeIn(src='/assets/images/ghost.png')      

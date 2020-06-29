@@ -1,4 +1,5 @@
-import {Router} from 'express';
+import { Router } from 'express';
+import compose from 'composable-middleware';
 
 import * as controller from './spam.controller';
 import * as auth from '../../auth/auth.service';
@@ -16,14 +17,38 @@ var bruteforce = new ExpressBrute(store, {
     maxWait: 5000
 });
 
-router.get('/', auth.hasRole('member'), controller.index);
+function listTypeOk(req, res, next) {
+    return compose()
+        .use(auth.isAuthenticated())
+        .use(function meetsRequirements(req, res, next) {
+            if (
+                req.user.provider != 'twitter' || (
+                    req.user.role == "user" &&
+                    (req.query.listType || 0) == 0
+                )
+            ) {
+                return res.status(401).send();
+            }
+
+            next();
+            return null;
+        });
+}
+
+router.get('/', listTypeOk(), controller.index);
+
+router.get('/count', listTypeOk(), controller.count);
 router.get('/random', auth.isAuthenticated(), bruteforce.prevent, controller.random);
-router.get('/count', auth.hasRole('member'), controller.count);
+
+router.get(`/reset-task/${config.spamRoute}`, controller.resetTask);
+
 router.get(`/${config.spamRoute}`, controller.spam);
 router.get(`/${config.checkRoute}`, controller.check);
-router.get(`/reset-task/${config.spamRoute}`, controller.resetTask);
-router.get('/:username', auth.hasRole('member'), controller.show);
+
+router.get('/:username', listTypeOk(), controller.show);
+
 router.delete('/:id', auth.hasRole('member'), controller.destroy);
+
 router.post('/', auth.hasRole('member'), controller.create);
 router.post('/hide/:id', auth.isAuthenticated(), controller.hide);
 router.post('/queue', auth.hasRole('member'), controller.queue);

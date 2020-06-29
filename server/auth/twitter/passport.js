@@ -36,6 +36,7 @@ export function setup(User, config) {
             }
 
             User.findOne({
+                'isDeleted': { $ne: true },
                 'profile.id': profile._json.id
             }).exec()
                 .then(user => {
@@ -54,7 +55,7 @@ export function setup(User, config) {
                         
                         user.save();
 
-                        return user.isBlocked ? done(loginError) : done(null, user);
+                        return (user.isBanned || user.isBlocked) ? done(loginError) : done(null, user);
                     }
 
                     user = new User({

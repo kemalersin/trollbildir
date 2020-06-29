@@ -13,5 +13,7 @@ router.get('/count', auth.hasRole('member'), controller.count);
 router.get('/:username', auth.hasRole('member'), controller.show);
 router.post('/', controller.create);
 router.post('/password-reset', controller.resetPassword);
+router.post('/block', auth.hasRole('member'), controller.block);
+router.delete('/:id', auth.hasRole('member'), controller.destroy);
 
 module.exports = router;

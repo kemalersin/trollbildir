@@ -167,7 +167,8 @@ export class AuthService {
                 .toPromise()
                 .then((user: User) => {
                     const result =
-                        !!this.currentUser._id && (!isTwitterUser || user.provider == "twitter");
+                        !!this.currentUser._id &&
+                        (!isTwitterUser || user.provider == "twitter");
 
                     safeCb(callback)(result);
                     return result;
@@ -197,7 +198,10 @@ export class AuthService {
     }
 
     isTwitterUserSync() {
-        return this.currentUser.role === "user";
+        return (
+            this.currentUser.role === "user" &&
+            this.currentUser.provider === "twitter"
+        );
     }
 
     isMember(callback?) {

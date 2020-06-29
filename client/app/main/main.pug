@@ -1,3 +1,8 @@
+span.twitter-info.h-centered.hidden-xs.hidden-sm(*ngIf="!isLoggedIn")
+  i.fa.fa-twitter
+  | &nbsp;&nbsp;
+  a(href='/auth/twitter') Kapatılan hesapları görmek için Twitter ile giriş yapın
+
 h3.centered(*ngIf="isLoaded")
   p.text-center
     img(src='assets/images/logo.png', width='200', height='200')

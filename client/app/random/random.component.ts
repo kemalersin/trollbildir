@@ -12,8 +12,7 @@ import { AuthService } from "../../components/auth/auth.service";
 
 @Component({
     selector: "random",
-    template: require("./random.pug"),
-    styles: [require("./random.scss")],
+    template: require("./random.pug")
 })
 export class RandomComponent implements OnInit {
     loading;

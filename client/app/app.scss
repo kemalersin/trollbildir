@@ -17,7 +17,7 @@ body {
     .container.root {
       margin-bottom: 70px;
     }
-  }  
+  }
 }
 
 .centered,
@@ -126,6 +126,11 @@ a[target='_blank'] {
   display: none !important;
 }
 
+[dropdown].count-next {
+  position: absolute;
+  right: 15px;
+}
+
 .validated {
   .ng-valid[required],
   .ng-valid.required {
@@ -144,12 +149,6 @@ a[target='_blank'] {
   }
 }
 
-.spam {
-  cursor: pointer;
-  text-decoration: none;
-  color: #42A948;
-}
-
 .btn:focus,
 .btn:active,
 .navbar-default .navbar-nav>.active>a {
@@ -160,7 +159,7 @@ a[target='_blank'] {
 p.count {
   margin-bottom: 0;
 
-  > span {
+  >span {
     padding: 8px 10px;
     border: 1px solid #ddd;
     border-radius: 6px;
@@ -244,15 +243,136 @@ a.generated {
   }
 }
 
+.panel.profiles {
+  padding: 20px;
+
+  .buttons {
+    top: 10px;
+    right: 25px;
+    position: absolute;
+
+    .btn {
+      padding: 2px 6px;
+    }
+  }
+
+  &:not(.without-buttons) {
+    p.image {
+      margin-top: 20px;
+    }
+  }
+
+  h4.username {
+    margin-bottom: 0;
+  }
+
+  p.description,
+  p.status {
+    min-height: 100px;
+    margin-bottom: 0;
+    display: flex;
+    text-align: left;
+    justify-content: center;
+    align-items: center;
+  }
+
+  p.status {
+    border: 2px dashed #ddd;
+    border-radius: 6px;
+    padding: 16px;
+  }
+
+  p.dates {
+    margin-top: 40px;
+    margin-bottom: 0;
+
+    span.date {
+      padding: 8px 10px;
+      border-width: 1px;
+      border-style: solid;
+      border-color: rgb(221, 221, 221);
+      border-radius: 6px;
+      margin-bottom: 5px;
+      display: inline-block;
+    }
+  }
+}
+
+.profiles.refresh {
+  margin: 20px 0;
+
+  .btn {
+    padding: 10px 20px;
+    text-transform: uppercase;
+
+    &:focus {
+      background-color: #e95420;
+      border-color: #e95420;
+    }
+  }
+}
+
+.panel-body.user-card {
+  padding-top: 10px;
+  padding-bottom: 20px;
+
+  p.status {
+      padding: 2px 6px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      position: absolute;
+      right: 22px;
+      top: 8px;
+
+      .fa {
+          font-size: 15px;
+      }
+
+      .fa-check {
+          color: #42A948;
+      }
+
+      .fa-ban,
+      .fa-times {
+          color: rgb(209, 91, 71);
+      }
+  }
+
+  .spam, .block {
+    cursor: pointer;
+    text-decoration: none;
+  }
+  
+  .spam {
+    color: #42A948;
+  }  
+
+  .block {
+    color: #4499c3;
+  }
+}
+
 @media (min-width: 568px) {
   .ngx-dialog.custom-alert {
     .ngx-dialog-content {
       width: 400px !important;
     }
   }
+
+  p.dates {
+    span.date {
+      &:first-child {
+        margin-right: 10px;
+      }
+    }
+  }
 }
 
 @media (max-width: 568px) {
+  p.count {
+    text-align: left;
+  }
+
   form.centered {
     width: 100%;
     left: initial;
