@@ -234,6 +234,7 @@ export function create(req, res) {
                     const newSpam = new Spam({
                         username: profile.screen_name,
                         profile: profile,
+                        addedBy: req.user ? req.user._id : null
                     });
 
                     return newSpam
@@ -275,6 +276,8 @@ export function destroy(req, res) {
         .exec()
         .then(function (spam) {
             spam.isDeleted = true;
+            spam.deletedBy = req.user ? req.user._id : null;
+
             spam.save();
 
             Queue.updateMany({ spamId }, { $set: { isDeleted: true } }).exec();

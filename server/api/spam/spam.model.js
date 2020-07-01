@@ -6,6 +6,10 @@ mongoose.Promise = require('bluebird');
 
 var SpamSchema = new Schema({
     username: String,
+    report: {
+        type: Schema.ObjectId,
+        ref: 'Report'
+    },          
     checkedAt: {
         type: Date,
         default: new Date()
@@ -21,7 +25,15 @@ var SpamSchema = new Schema({
     isSuspended: {
         type: Boolean,
         default: false
+    }, 
+    addedBy: {
+        type: Schema.ObjectId,
+        ref: 'User'
     },    
+    deletedBy: {
+        type: Schema.ObjectId,
+        ref: 'User'
+    },         
     profile: {}
 }, { timestamps: true });
 

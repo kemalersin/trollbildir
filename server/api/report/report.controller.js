@@ -117,7 +117,7 @@ export function create(req, res) {
                                 profile: profile,
                                 notes: notes,
                                 picture: req.file ? req.file.filename : null,
-                                reporter: req.user._id
+                                reporter: req.user ? req.user._id : null
                             });
 
                             return newReport
@@ -215,8 +215,9 @@ export function approve(req, res) {
                     }
 
                     const newSpam = new Spam({
-                        username: report.profile.screen_name,
+                        username: report.profile.screen_name,                        
                         profile: report.profile,
+                        report: report._id
                     });
 
                     return newSpam
@@ -232,6 +233,8 @@ export function approve(req, res) {
                 });
 
             report.isApproved = true;
+            report.approver = req.user ? req.user._id : null;
+
             report.save().then((report) => res.json(report));
         })
         .catch(handleError(res));
@@ -249,6 +252,8 @@ export function reject(req, res) {
             }
 
             report.isApproved = false;
+            report.approver = req.user ? req.user._id : null;
+
             report.save().then((report) => res.json(report));
         })
         .catch(handleError(res));

@@ -18,7 +18,7 @@ var UserSchema = new Schema({
     password: String,
     provider: String,
     salt: String,
-    oldUsernames: [String],
+    oldUsernames: [String],      
     isBanned: {
         type: Boolean,
         default: false
@@ -39,6 +39,14 @@ var UserSchema = new Schema({
         type: Boolean,
         default: false
     },
+    bannedBy: {
+        type: Schema.ObjectId,
+        ref: 'User'
+    },     
+    deletedBy: {
+        type: Schema.ObjectId,
+        ref: 'User'
+    },     
     profile: {},
     accessToken: String,
     accessTokenSecret: String,

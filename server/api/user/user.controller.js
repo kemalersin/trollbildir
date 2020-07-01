@@ -343,6 +343,8 @@ export function ban(req, res) {
                 }
 
                 user.isBanned = true;
+                user.bannedBy = req.user._id;
+
                 user.save();
 
                 res.status(204).end()
@@ -368,6 +370,8 @@ export function destroy(req, res) {
                 }
 
                 user.isDeleted = true;
+                user.deletedBy = req.user._id;
+
                 user.save();
 
                 res.status(204).end();
