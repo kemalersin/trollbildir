@@ -258,9 +258,13 @@ export function create(req, res) {
 
 export function show(req, res, next) {
     const username = req.params.username;
-    var index = +req.query.index || 1;
 
-    return Spam.find({ username: { $regex: new RegExp(username, "i") } })
+    var index = +req.query.index || 1;
+    var filter = getSpamFilter(req);
+
+    filter = assignIn(filter, { username: { $regex: new RegExp(username, "i") } });
+
+    return Spam.find(filter)
         .skip(--index * config.dataLimit)
         .limit(config.dataLimit)
         .exec()
@@ -372,7 +376,7 @@ export async function spam(req, res) {
                     async.eachSeries(users, (user, cbOuter) => {
                         let twitter = getTwitter(user);
 
-                        user.isLocked = false;                                        
+                        user.isLocked = false;
                         user.isSuspended = false;
                         user.tokenExpired = false;
 
