@@ -38,7 +38,7 @@ function getUserFilter(req) {
     }
     else if (listType == 2) {
         filter = assignIn(filter, {
-            isBlocked: true
+            isBanned: true
         });
     }
     else if (listType == 3) {
@@ -328,7 +328,7 @@ export function me(req, res, next) {
         .catch(err => next(err));
 }
 
-export function block(req, res) {
+export function ban(req, res) {
     if (req.body.id === req.user._id) {
         return res.status(403).end()
     }

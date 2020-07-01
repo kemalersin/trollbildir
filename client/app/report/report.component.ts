@@ -110,6 +110,16 @@ export class ReportComponent implements OnInit {
             });
     }
 
+    check(index) {
+        this.count--;
+        this.reports.splice(index, 1);
+
+        if (this.count && !this.reports.length) {
+            this.index = 0;
+            this.onScroll();
+        }
+    }
+
     approve(report) {
         this.reportService.approve(report).subscribe((reportedUser) => {
             var n = this.reports.indexOf(reportedUser);
@@ -121,8 +131,7 @@ export class ReportComponent implements OnInit {
                 return;
             }
 
-            this.count--;
-            this.reports.splice(n, 1);
+            this.check(n);
         });
     }
 
@@ -136,10 +145,12 @@ export class ReportComponent implements OnInit {
                 this.alert.removeAlert("ban-user");
 
                 this.reportService
-                .ban(report)
-                .subscribe((reportedUser) =>
-                    this.toastr.info("Kullanıcı engelleme listesine alındı.")
-                );
+                    .ban(report)
+                    .subscribe((reportedUser) =>
+                        this.toastr.info(
+                            "Kullanıcı engelleme listesine alındı."
+                        )
+                    );
             },
         });
     }
@@ -155,8 +166,7 @@ export class ReportComponent implements OnInit {
                 return;
             }
 
-            this.count--;
-            this.reports.splice(n, 1);
+            this.check(n);
         });
     }
 
@@ -168,11 +178,11 @@ export class ReportComponent implements OnInit {
             customCssClass: "custom-alert",
             confirm: () => {
                 this.alert.removeAlert("remove-user");
-
-                this.reportService.remove(report).subscribe((reportedUser) => {
-                    this.count--;
-                    this.reports.splice(this.reports.indexOf(reportedUser), 1);
-                });
+                this.reportService
+                    .remove(report)
+                    .subscribe((reportedUser) =>
+                        this.check(this.reports.indexOf(reportedUser))
+                    );
             },
         });
     }

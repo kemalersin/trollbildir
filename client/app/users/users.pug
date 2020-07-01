@@ -44,11 +44,11 @@
       .panel.panel-default
         .panel-body.user-card
           p.status
-            span.small(*ngIf='!(user.isBanned || user.isLocked || user.isBlocked || user.isSuspended || user.tokenExpired)')
+            span.small(*ngIf='!(user.isBanned || user.isLocked || user.isSuspended || user.tokenExpired)')
               i.fa.fa-check
               = ' '
               | Aktif
-            span.small(*ngIf='user.isBanned || user.isLocked || user.isBlocked || user.isSuspended || user.tokenExpired')
+            span.small(*ngIf='user.isBanned || user.isLocked || user.isSuspended || user.tokenExpired')
               i.fa.fa-times
               = ' '
               | Aktif değil

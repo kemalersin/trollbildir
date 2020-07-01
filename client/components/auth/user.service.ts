@@ -77,7 +77,7 @@ export class UserService {
 
     ban(user) {
         return this.http
-            .post("/api/users/block", {
+            .post("/api/users/ban", {
                 id: user.id || user._id,
             })
             .pipe(map(() => user));

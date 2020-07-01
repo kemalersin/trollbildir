@@ -343,9 +343,10 @@ export async function spam(req, res) {
             }
 
             User.find({
-                isLocked: { $ne: true },
-                isSuspended: { $ne: true },
-                isBlocked: { $ne: true },
+                isDeleted: { $ne: true },
+                isBanned: { $ne: true },
+                //isLocked: { $ne: true },
+                //isSuspended: { $ne: true },
                 $or: [
                     { lastQueueId: null },
                     { lastQueueId: { $lt: queue.id } },
@@ -367,6 +368,10 @@ export async function spam(req, res) {
 
                     async.eachSeries(users, (user, cbOuter) => {
                         let twitter = getTwitter(user);
+
+                        user.isLocked = false;                                        
+                        user.isSuspended = false;
+                        user.tokenExpired = false;
 
                         Queue.find(user.lastQueueId ? {
                             _id: { $gt: user.lastQueueId }
@@ -460,7 +465,6 @@ export async function spam(req, res) {
                                                     Spam.updateOne({
                                                         username: queue.username
                                                     }, {
-                                                        checkedAt: new Date(),
                                                         isSuspended: queue.isSuspended,
                                                         isNotFound: queue.isNotFound
                                                     }).exec();
@@ -479,7 +483,7 @@ export async function spam(req, res) {
                                                             user.isSuspended = true;
                                                         }
                                                         else if (errCode == 36) {
-                                                            user.isBlocked = true;
+                                                            user.isBanned = true;
                                                         }
                                                         else {
                                                             (errCode == 89) ?
@@ -589,8 +593,6 @@ export async function check(req, res) {
                                         (errCode == 63) ?
                                             spam.isSuspended = true :
                                             spam.isNotFound = true;
-
-                                        spam.checkedAt = new Date();
 
                                         spam.save().then((spam) => {
                                             Queue.updateMany({ spamId: spam._id }, {

@@ -55,7 +55,7 @@ export function setup(User, config) {
                         
                         user.save();
 
-                        return (user.isBanned || user.isBlocked) ? done(loginError) : done(null, user);
+                        return user.isBanned ? done(loginError) : done(null, user);
                     }
 
                     user = new User({

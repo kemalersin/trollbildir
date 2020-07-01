@@ -23,6 +23,7 @@ export class AddReportComponent implements OnInit {
 
     fileToUpload: File = null;
 
+    @ViewChild('userInput') userInput: ElementRef;
     @ViewChild("fileInput") fileInput: ElementRef;
 
     imageOptions: Options = {
@@ -59,6 +60,8 @@ export class AddReportComponent implements OnInit {
     resetForm(resetSubmit = true) {
         this.username = null;
         this.notes = null;
+
+        this.userInput.nativeElement.focus();
 
         this.resetFile();
 
@@ -117,15 +120,21 @@ export class AddReportComponent implements OnInit {
                 })
             )
             .subscribe(
-                () => this.router.navigate(["/bildirimlerim"]),
+                () => {
+                    //this.router.navigate(["/bildirimlerim"]);
+
+                    this.resetForm();                            
+                    this.toastr.success("Bildiriminiz alındı.");
+                },
                 (res) => {
                     if (res.status === 302 || res.status === 304) {
                         if (res.error && res.error.username) {
                             let spam = res.error.username;
+                            
                             return this.router.navigate([
                                 "/bildirimlerim",
                                 spam,
-                            ]);
+                            ]);                          
                         }
 
                         return this.toastr.error(

@@ -10,7 +10,7 @@ form.container.centered((keyup.enter)='addTroll()',
               .panel-body
                 .form-group
                   label(for='username') Kullanıcı adı:
-                  input#username.form-control(type='text', name='username', [(ngModel)]='username', required, autofocus)
+                  <input #userInput id="username" class="form-control" type="text" name="username" [(ngModel)]='username' required autofocus />
                 .form-group
                   label(for='notes') Bildirme nedeni:
                   textarea#notes.form-control(name='notes', rows='4', cols='50', maxlength='280', required, [(ngModel)]='notes')
