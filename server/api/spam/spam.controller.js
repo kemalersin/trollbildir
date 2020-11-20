@@ -75,6 +75,7 @@ function createMultiple(req, res, usernames) {
                         const newSpam = new Spam({
                             username: profile.screen_name,
                             profile: profile,
+                            addedBy: req.user ? req.user._id : null
                         });
 
                         newSpam
